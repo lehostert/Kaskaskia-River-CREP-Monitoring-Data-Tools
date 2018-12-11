@@ -18,6 +18,13 @@ library(dplyr)
 # library(tidyverse)
 # FMD_dataset_TV <- lapply(FishMD_filenames, read_csv) %>% bind_rows()
 
+# library(tidyverse)
+# 
+# TidyLW <- list.files(path = "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FLW",
+#                      pattern="*.csv", 
+#                      full.names = T) %>% 
+#   map_df(~read_csv(.))
+
 library(tidyverse)
 
 ##### The following sets of commands intend to take all csv files from their respective "Data_In" folders and combine them into
@@ -47,7 +54,6 @@ head(FMD_dataset)
  
  FMD_dataset <- FishMD_dataset %>% select(-c(Gap_Code,Data_Entered_By,Data_Entered_Date))
  write.csv(FMD_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/FMD_2018.csv", na=".")
- 
 
 ## Fish Abundance 
  
@@ -62,31 +68,80 @@ FSH_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Dat
  
  ## Fish Length Weight
  
- ### You must return to this in order to fix the problems. Currently when applyings the do.call string 
- 
  FLW_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FLW", pattern="*.csv")
  FLW_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FLW",FLW_filenames)
- FishLW_dataset <- do.call("rbind",lapply(FLW_fullpath, FUN = function(files){read.csv(files)}))
+ FishLW_dataset <- do.call("rbind",lapply(FLW_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
  
  head(FishLW_dataset) 
  
- FSH_dataset <- FishA_dataset %>% select(-c(Gap_Code,Fish_Species_Common,Fish_Species_Scientific,Event_Day,Event_Year,Event_Month))
- write.csv(FSH_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/FSH_2018.csv", na=".")
- 
-LW_1517 <- read.csv('//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FLW/Fish_Lw_kasky1517_20181001.csv')
+ FLW_dataset <- FishLW_dataset %>% select(-c(Gap_Code,Event_Year,Event_Month,Event_Day,Fish_Species_Common,Fish_Species_Scientific))
+ write.csv(FLW_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/FLW_2018.csv")
 
- read.csv('//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FLW/Fish_Lw_kasky2240_20180925.csv')
+ ## Illinois Habitat Index
  
+IHI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/IHI", pattern="*.csv")
+ IHI_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/IHI",IHI_filenames)
+ IHI_fulldataset <- do.call("rbind",lapply(IHI_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
  
- library(tidyverse)
+ head(IHI_fulldataset) 
  
-TidyLW <- list.files(path = "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FLW",
-            pattern="*.csv", 
-            full.names = T) %>% 
-            map_df(~read_csv(.))
- 
-##TEST
-test_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/TEST", pattern="*.csv")
-test_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/TEST",test_filenames)
-test_dataset <- do.call("rbind",lapply(test_fullpath, FUN = function(x){read.csv(x)}))
-head(test_dataset)
+  IHI_dataset <- IHI_fulldataset %>% select(-c(Ecoregion,Gradient))
+  write.csv(IHI_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/IHI_2018.csv")
+  
+## Invertebrate Field Collection
+  
+INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/INV", pattern="*.csv")
+  INV_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/INV",INV_filenames)
+  INV_fulldataset <- do.call("rbind",lapply(INV_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+  
+  head(INV_fulldataset) 
+  
+  INV_dataset <- INV_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
+  write.csv(INV_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/INV_2018.csv")
+  
+
+## Qualitative Habitat Evaluation Index
+  
+  QHEI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/QHEI", pattern="*.csv")
+  QHEI_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/QHEI",QHEI_filenames)
+  QHEI_fulldataset <- do.call("rbind",lapply(QHEI_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+  
+  head(QHEI_fulldataset) 
+  
+  QHEI_dataset <- QHEI_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
+  write.csv(QHEI_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/QHEI_2018.csv")
+  
+  
+## Stream Water Chemistry
+  
+  SWC_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/SWC", pattern="*.csv")
+  SWC_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/SWC",SWC_filenames)
+  SWC_fulldataset <- do.call("rbind",lapply(SWC_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+  
+  head(SWC_fulldataset) 
+  
+  SWC_dataset <- SWC_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
+  write.csv(SWC_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/SWC_2018.csv")
+  
+
+## Stream Water Chemistry
+  
+  SWC_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/SWC", pattern="*.csv")
+  SWC_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/SWC",SWC_filenames)
+  SWC_fulldataset <- do.call("rbind",lapply(SWC_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+  
+  head(SWC_fulldataset) 
+  
+  SWC_dataset <- SWC_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
+  write.csv(SWC_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/SWC_2018.csv") 
+
+
+
+
+
+
+
+
+
+
+
