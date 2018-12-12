@@ -13,17 +13,19 @@ write.csv(DSC_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Da
 ### Fish Metadata 
  FMD_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FMD", pattern="*.csv")
   FMD_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FMD",FMD_filenames)
-  FMD_fulldataset <- do.call("rbind",lapply(FMD_fullpath, FUN = function(files){read.csv(files)}))
-  FMD_dataset <- FMD_fulldataset %>% select(-c(Gap_Code,Data_Entered_By,Data_Entered_Date))
+  FMD_fulldataset <- do.call("rbind",lapply(FMD_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+  FMD_dataset <- FMD_fulldataset %>% select(-c(Gap_Code,Event_Year,Event_Month,Event_Day,Data_Entered_By,Data_Entered_Date))
  write.csv(FMD_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/FMD_2018.csv", na=".")
 
 ### Fish Abundance 
  
 FSH_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FSH", pattern="*.csv")
 FSH_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FSH",FSH_filenames)
- FSH_fulldataset <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){read.csv(files)}))
- FSH_dataset <- FSH_fulldataset %>% select(-c(Gap_Code,Fish_Species_Common,Fish_Species_Scientific,Event_Day,Event_Year,Event_Month))
- write.csv(FSH_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/FSH_2018.csv", na=".")
+ FSH_fulldataset <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+ FSH_dataset <- FSH_fulldataset %>% 
+      select(-c(Gap_Code,Fish_Species_Common,Fish_Species_Scientific,Event_Day,Event_Year,Event_Month)) %>% 
+      drop_na()
+ write.csv(FSH_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/FSH_2018.csv")
  
  ### Fish Length Weight
  
@@ -63,7 +65,7 @@ INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CRE
   
   SWC_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/SWC", pattern="*.csv")
   SWC_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/SWC",SWC_filenames)
-  SWC_fulldataset <- do.call("rbind",lapply(SWC_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+  SWC_fulldataset <- do.call("rbind",lapply(SWC_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE, na.strings='.')}))
   SWC_dataset <- SWC_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
   write.csv(SWC_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/SWC_2018.csv")
   
