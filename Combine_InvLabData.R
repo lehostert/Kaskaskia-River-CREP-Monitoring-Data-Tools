@@ -1,7 +1,8 @@
 library(tidyverse)
 
+
 INVLab_2017 <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/INV_Lab/EcoAnalysts_MacroinvertebrateTaxonomy_2014-2017.csv", header = TRUE)
-names(INVLab_2017)
+#names(INVLab_2017)
 
 names(INVLab_2017)[names(INVLab_2017) == 'DATE_COL'] <- 'Event_Date'
 names(INVLab_2017)[names(INVLab_2017) == 'LIFE.STAGE'] <- 'LIFE_STAGE'
@@ -12,7 +13,7 @@ names(INVLab_2017)[names(INVLab_2017) == 'SERIAL'] <- 'ITIS_TAXON_SN'
 
 
 INVLab_2013 <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/INV_Lab/EcoAnalysts_MacroinvertebrateTaxonomy_2013-2014.csv", header = TRUE)
-names(INVLab_2013)
+#names(INVLab_2013)
 
 names(INVLab_2013)[names(INVLab_2013) == 'ARC'] <- 'PU_Gap_Code'
 names(INVLab_2013)[names(INVLab_2013) == 'TYPE'] <- 'Site_Type'
@@ -23,6 +24,19 @@ names(INVLab_2013)[names(INVLab_2013) == 'LAB_COM'] <- 'LAB_COMMENTS'
 names(INVLab_2013)[names(INVLab_2013) == 'SERIAL'] <- 'ITIS_TAXON_SN'
 
 INVLab_2013_modern <- gather(INVLab_2013, 'LARVAE', 'PUPAE','ADULTS', key = 'LIFE_STAGE', value = "ABUNDANCE", na.rm = TRUE)
+
+INVLab_2013_modern_NA<- INVLab_2013_modern[is.na(INVLab_2013_modern$PU_Gap_Code),] %>%
+  distinct(SITE, Reach_Name, Event_Date, .keep_all = TRUE)
+
+INVLab_2017_test<- INVLab_2017
+
+
+###
+
+ 
+
+###
+
 
 names(INVLab_2013_modern)
 names(INVLab_2017)
