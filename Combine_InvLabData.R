@@ -1,5 +1,6 @@
+library(arsenal)
+library(testthat)
 library(tidyverse)
-
 
 INVLab_2017 <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/INV_Lab/EcoAnalysts_MacroinvertebrateTaxonomy_2014-2017.csv", header = TRUE)
 names(INVLab_2017)
@@ -23,7 +24,25 @@ names(INVLab_2013)[names(INVLab_2013) == 'X._IN_RC'] <- 'NUM_IN_RC'
 names(INVLab_2013)[names(INVLab_2013) == 'LAB_COM'] <- 'LAB_COMMENTS'
 names(INVLab_2013)[names(INVLab_2013) == 'SERIAL'] <- 'ITIS_TAXON_SN'
 
-INVLab_2013_modern <- gather(INVLab_2013, 'LARVAE', 'PUPAE','ADULTS', key = 'LIFE_STAGE', value = "ABUNDANCE", na.rm = TRUE)
+##Transform the 2013 data set to match the Abundance collumn of the 2017 dataset
+names(INVLab_2013)[names(INVLab_2013) == 'LARVAE'] <- 'Larvae'
+names(INVLab_2013)[names(INVLab_2013) == 'PUPAE'] <- 'Pupae'
+names(INVLab_2013)[names(INVLab_2013) == 'ADULTS'] <- 'Adults'
+INVLab_2013_modern <- gather(INVLab_2013, 'Larvae', 'Pupae','Adults', key = 'LIFE_STAGE', value = "ABUNDANCE", na.rm = TRUE)
+names(INVLab_2013_modern)
+
+
+####Give each of the sites a PU_Gap_Code in INV_Lab_2017 df. 
+
+UniqueSitesList_2017 <- read.csv("UniqueSitesList_2017.csv", header = TRUE)
+names(UniqueSitesList_2017)
+names(INVLab_2017)
+
+INVLab_2017_wGap <- left_join(INVLab_2017, UniqueSitesList_2017)
+names(INVLab_2017_wGap)
+INVLab_2017_wGap <- INVLab_2017_wGap[c(42,1,2,4,3,43,5:41)]
+
+
 
 ###Check to see if there are any sites with no PU Gap Code. Originally there should ahve been 1 from "trib to..." but it was comingup as 0
 ### Changed blank to "." and additional NAs verify this might help with consolidation. 
@@ -36,9 +55,12 @@ INVLab_2017_test<- INVLab_2017
 
 ###
 
+INVLab_2013_missing<- INVLab_2013[is.na(INVLab_2013$LARVAE) & is.na(INVLab_2013$PUPAE) & is.na(INVLab_2013$ADULTS),]
+
+write.csv(INVLab_2013_missing, file = "INVLab_2013Data_missing.csv")
  
 
-###
+###SKIP THIS SECTION
 
 
 names(INVLab_2013_modern)
@@ -63,48 +85,54 @@ INVLab_2013_modern$LIFE_STAGE <- as.factor(INVLab_2013_modern$LIFE_STAGE)
 INVLab_2013_modern$ADDITIONS<- as.character(INVLab_2013_modern$ADDITIONS)
 INVLab_2013_modern$NUM_IN_RC <- as.integer(INVLab_2013_modern$NUM_IN_RC)
 
-UniqueSitesList_2017 <- read.csv("UniqueSitesList_2017.csv", header = TRUE)
-names(UniqueSitesList_2017)
-names(INVLab_2017)
 
-INVLab_2017_wGap <- left_join(INVLab_2017, UniqueSitesList_2017)
-INVLab_2017_wGap <- INVLab_2017_wGap[c(42,1,2,4,3,43,5:41)]
 
 ## UNique Fields INVLab_2013_modern <- -C("TOTAL","X.SUB","") "SITE", "PU_GAP_Code", "Site_Type", "COUNT", 
 ## Unique Fields INVLab_2017 <- "REP", "LR_TAX", 
 
 cbind(lapply(INVLab_2013_modern, class),lapply(INVLab_2017_wGap, class))
 
+###Use Compare function from arsenal and test that to compare the classes of the df. 
+summary(compare(INVLab_2013_modern, INVLab_2017_wGap))
+
+### Change the classes that do not agree
+
+
 INVLab_2017_wGap$Event_Date <- as.character.Date(INVLab_2017_wGap$Event_Date)
 INVLab_2013_modern$Event_Date <- as.character.Date(INVLab_2013_modern$Event_Date)
-INVLab_2017_wGap$DISTINCT <- as.factor(INVLab_2017_wGap$DISTINCT)
-INVLab_2013_modern$DISTINCT <- as.factor(INVLab_2013_modern$DISTINCT)
-INVLab_2017_wGap$AGGREGATED <- as.factor(INVLab_2017_wGap$AGGREGATED)
-INVLab_2013_modern$AGGREGATED <- as.factor(INVLab_2013_modern$AGGREGATED)
-INVLab_2017_wGap$LAB_COMMENTS <- as.character(INVLab_2017_wGap$LAB_COMMENTS)
-INVLab_2013_modern$LAB_COMMENTS<- as.character(INVLab_2013_modern$LAB_COMMENTS)
-INVLab_2017_wGap$KINGDOM <- as.factor(INVLab_2017_wGap$KINGDOM)
-INVLab_2013_modern$KINGDOM<- as.factor(INVLab_2013_modern$KINGDOM)
-INVLab_2017_wGap$ADDITIONS <- as.character(INVLab_2017_wGap$ADDITIONS)
-INVLab_2013_modern$ADDITIONS<- as.character(INVLab_2013_modern$ADDITIONS)
+INVLab_2017_wGap$SUBGENUS <- as.factor(INVLab_2017_wGap$SUBGENUS)
+INVLab_2013_modern$SUBGENUS <- as.factor(INVLab_2013_modern$SUBGENUS)
 INVLab_2017_wGap$LIFE_STAGE <- as.factor(INVLab_2017_wGap$LIFE_STAGE)
 INVLab_2013_modern$LIFE_STAGE<- as.factor(INVLab_2013_modern$LIFE_STAGE)
-INVLab_2017_wGap$ABUNDANCE <- as.integer(INVLab_2017_wGap$ABUNDANCE)
-INVLab_2013_modern$ABUNDANCE<- as.integer(INVLab_2013_modern$ABUNDANCE)
 
-INVLab_Combined<- INVLab_2013_modern %>% select(-c(Site_Type, TOTAL, X._SUB)) %>%
-  bind_rows(INVLab_2017_wGap, .id = 'EA_Dataset')
 
-write.csv(INVLab_Combined, file= "INVLab_Combined.csv")
 
+# INVLab_2017_wGap$AGGREGATED <- as.factor(INVLab_2017_wGap$AGGREGATED)
+# INVLab_2013_modern$AGGREGATED <- as.factor(INVLab_2013_modern$AGGREGATED)
+# INVLab_2017_wGap$LAB_COMMENTS <- as.character(INVLab_2017_wGap$LAB_COMMENTS)
+# INVLab_2013_modern$LAB_COMMENTS<- as.character(INVLab_2013_modern$LAB_COMMENTS)
+# INVLab_2017_wGap$KINGDOM <- as.factor(INVLab_2017_wGap$KINGDOM)
+# INVLab_2013_modern$KINGDOM<- as.factor(INVLab_2013_modern$KINGDOM)
+# INVLab_2017_wGap$ADDITIONS <- as.character(INVLab_2017_wGap$ADDITIONS)
+# INVLab_2013_modern$ADDITIONS<- as.character(INVLab_2013_modern$ADDITIONS)
+# INVLab_2017_wGap$LIFE_STAGE <- as.factor(INVLab_2017_wGap$LIFE_STAGE)
+# INVLab_2013_modern$LIFE_STAGE<- as.factor(INVLab_2013_modern$LIFE_STAGE)
+# INVLab_2017_wGap$ABUNDANCE <- as.integer(INVLab_2017_wGap$ABUNDANCE)
+# INVLab_2013_modern$ABUNDANCE<- as.integer(INVLab_2013_modern$ABUNDANCE)
+
+INVLab_Combined<- INVLab_2017_wGap %>%
+  bind_rows(INVLab_2013_modern, .id = 'EA_Dataset') %>%
+  select(-c(Site_Type, TOTAL, X._SUB,SITE))
+
+
+write.csv(INVLab_Combined, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/INVLab_Combined_blank2.csv", na = "")
+
+ 
+################### Stuff you might need later. 
+##############################################
 
 UNQ_17<- unique(INVLab_2017[c("Reach_Name","SITE","Event_Date", "REP")])
 write.csv(UNQ_17, file= "UniqueSites_2017.csv")
-
-
-
-
-##############################################
 
 
 Sites_2017 <- read.csv("Events_2017.csv", header = TRUE, stringsAsFactors = FALSE)
@@ -115,7 +143,6 @@ Sites_2017$Purpose <- as.factor(Sites_2017$Purpose)
 
 
 Sites_2017$PU_Gap_Code<- paste("kasky",Sites_2017$Gap_Code,sep = '')
-
 
 
 # Table1_Combo <- Sites_2017 %>%
@@ -153,7 +180,7 @@ INV_NoMatch2_unique <- INV_NoMatch2 %>%
 INV_NoMatch3_unique <- INV_NoMatch2 %>%
   left_join(INVLab_2017, by= c("Reach_Name","Event_Date"))
 
-#### On going error. 5001 was sampled 7/21/15 aacordind to data sheets. incorrect in DB Table. 
+#### On going error. 5001 was sampled 7/21/15 aacording to data sheets. incorrect in DB Table. 
 
 ## Invertebrate Lab Data
 
