@@ -1,9 +1,11 @@
 library(tidyverse)
 
-#input_file_path <- "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/INVLab_Combined_blank.csv"
-input_file_path <- "INVLab_test.csv"
+# INVLab_combines_update is a manually edited file to resolve taxonomic level info that 
+# have changes between2014 and 2017 datasets. The most recent (ie. 2017) datasets info was used 
+# to replace taxon level info. 
+input_file_path <- "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/INVLab_Combined_Update.csv"
 
-input_tibble <- tibble::as_tibble(read.csv(input_file_path))
+input_tibble <- tibble::as_tibble(read.csv(input_file_path, na = c("NA","")))
 
 # Some of the data will be repeated in addition to the summary infomation
 # Get a list of sequential column names bordered by the first and last columns of interest
@@ -26,12 +28,32 @@ operations <- paste0('unique(',relevant_feature_names,')') %>%
 operation_names <- stringr::str_to_title(relevant_feature_names, locale = "en") %>%
   purrr::prepend(summary_column_names)
 
-# Before gave "summarise" all the information manually
-#summary_table <- input_tibble %>% 
-#  dplyr::group_by(TAXON_NAME) %>%
-#  dplyr::summarise(Total_Abundance=sum(ABUNDANCE),
-#            Site_Frequency=n_distinct(Reach_Name),
-#            whole bunch of unique() calls)
+# Before gave "summarise" all the information manually as seen below
+# summary_tibble <- input_tibble %>%
+#   dplyr::group_by(TAXON_NAME) %>%
+#   dplyr::summarise(Total_Abundance=sum(ABUNDANCE),
+#             Site_Frequency=n_distinct(Reach_Name),
+#            Kingdom =unique(KINGDOM), 
+#            Phylum =unique(PHYLUM), 
+#            Subphylum =unique(SUBPHYLUM), 
+#            Class =unique(CLASS),
+#            Subclass =unique(SUBCLASS),
+#            Subclass =unique(SUBCLASS),
+#            Infraclass =unique(INFRACLASS),
+#            Superorder =unique(SUPERORDER),
+#            Order =unique(ORDER),
+#            Suborder =unique(SUBORDER),
+#            Infraorder =unique(INFRAORDER),
+#            Superfamily =unique(SUPERFAMILY),
+#            Family =unique(FAMILY),
+#            Subfamily =unique(SUBFAMILY),
+#            Tribe =unique(TRIBE),
+#            Subtribe =unique(SUBTRIBE),
+#            Genus =unique(GENUS),
+#            Subgenus =unique(SUBGENUS),
+#            Species =unique(SPECIES),
+#            Subspecies =unique(SUBSPECIES)
+#            )
 
 # Apply the summary operations to get the invertebrate summary tibble
 # N.B.: Using "summarise_" and the ".dots" variable
@@ -43,10 +65,19 @@ operation_names <- stringr::str_to_title(relevant_feature_names, locale = "en") 
 # - https://datascience.blog.wzb.eu/2016/09/27/dynamic-columnvariable-names-with-dplyr-using-standard-evaluation-functions/
 # - https://stackoverflow.com/questions/26724124/standard-evaluation-in-dplyr-summarise-on-variable-given-as-a-character-string
 # - https://dplyr.tidyverse.org/articles/programming.html
-summary_tibble <- input_tibble %>% 
-  dplyr::group_by(TAXON_NAME) %>%
+
+#This will give summarise information in the form of operations previously defined. 
+summary_tibble <- input_tibble %>%
+  dplyr::group_by(TAXON_NAME) %>% 
+  dplyr::summarise_(.dots=stats::setNames(operations, operation_names))
+
+summary_tibble_by_life_stage <- input_tibble %>%
+  dplyr::group_by(TAXON_NAME, LIFE_STAGE) %>% 
   dplyr::summarise_(.dots=stats::setNames(operations, operation_names))
 
 # save the summary_tibble to .csv
-output_file_path = "ltrain_runs_train.csv"
+output_file_path = "CREP_Invert_Species_Matrix.csv"
 readr::write_csv(summary_tibble, output_file_path)
+
+lifestage_output_file_path = "CREP_Invert_Species_Matrix_By_LifeStage.csv"
+readr::write_csv(summary_tibble_by_life_stage, lifestage_output_file_path)
