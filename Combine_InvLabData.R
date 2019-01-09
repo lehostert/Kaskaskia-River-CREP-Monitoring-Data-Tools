@@ -125,7 +125,7 @@ INVLab_Combined<- INVLab_2017_wGap %>%
   select(-c(Site_Type, TOTAL, X._SUB,SITE))
 
 
-write.csv(INVLab_Combined, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/INVLab_Combined_blank2.csv", na = "")
+write.csv(INVLab_Combined, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/INVLab_Combined_blank_lifestage.csv", na = "")
 
  
 ################### Stuff you might need later. 
