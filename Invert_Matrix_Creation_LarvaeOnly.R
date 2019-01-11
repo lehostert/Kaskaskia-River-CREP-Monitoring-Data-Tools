@@ -76,5 +76,5 @@ summary_tibble <- input_tibble %>%
 
 
 # save the summary_tibble to .csv
-output_file_path = "CREP_Invert_Species_Matrix_Larvae.csv"
+output_file_path = "CREP_Invert_Species_Matrix_Larvae_Only.csv"
 readr::write_csv(summary_tibble, output_file_path)
