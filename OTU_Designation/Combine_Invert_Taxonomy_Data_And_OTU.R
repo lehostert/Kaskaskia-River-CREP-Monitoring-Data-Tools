@@ -23,6 +23,7 @@ CREP <- full_join(CREP,sum)
 CREP_final <- filter(CREP, OTU_Suggestion != "REMOVE") %>% select(c(1:11,43,12:46))
 colnames(CREP_final) <- colnames(CREP_final) %>% str_replace_all("[:punct:]"," ") %>% str_to_title() %>% str_replace_all("[:blank:]","_")
 
+names(CREP_final)[names(CREP_final) == 'Pu_Gap_Code'] <- 'PU_Gap_Code'
 names(CREP_final)[names(CREP_final) == 'Otu_Suggestion'] <- 'OTU'
 names(CREP_final)[names(CREP_final) == 'Rep'] <- 'Replicate'
 names(CREP_final)[names(CREP_final) == 'Otu_Sn'] <- 'OTU_SN'
