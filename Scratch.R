@@ -72,3 +72,20 @@ otu_summary[198,4]="STEMLINA"
 
 nd[20,2]="You Did It!"
 
+########################### Summary Stats on Carp in CREP samples
+
+library(tidyverse)
+
+fish <- read.csv("C:/Users/lhostert/Documents/Invertebrate_Analysis/Fish_Abundance.csv", header = T, stringsAsFactors = F)
+code <- read.csv("C:/Users/lhostert/Documents/Invertebrate_Analysis/Fish_Codes.csv", header = T, stringsAsFactors = F)
+
+fish$Fish_Species_Code<- as.character(fish$Fish_Species_Code)
+
+asian_carp <- fish %>% dplyr::filter(Fish_Species_Code ==  "HYC|BHC|SCP|GRC|GBH")
+common_carp <- fish %>% dplyr::filter(Fish_Species_Code, CAP|CGH|GOF)
+common_carp <- fish %>% dplyr::filter(Fish_Species_Code == "CAP||CGH||GOF")
+common_carp <- fish %>% dplyr::filter(Fish_Species_Code == "CAP")
+
+asian_carp <- dplyr::filter(fish, Fish_Species_Code == HYC|BHC|SCP|GRC|GBH)
+
+names(fish)
