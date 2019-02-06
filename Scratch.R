@@ -89,3 +89,19 @@ common_carp <- fish %>% dplyr::filter(Fish_Species_Code == "CAP")
 asian_carp <- dplyr::filter(fish, Fish_Species_Code == HYC|BHC|SCP|GRC|GBH)
 
 names(fish)
+
+##########################
+library(tidyverse)
+habitat <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysis/Invert/CREP_Invert_Habitat_Characteristics.csv", header = T, stringsAsFactors = F)
+
+
+habitat <- habitat %>% select(-c("Habitat_IHI_ID","Habitat_IHI_PU_Gap_Code","Habitat_IHI_Reach_Name","Habitat_IHI_Event_Date",
+                                 "Habitat_QHEI_ID","Habitat_QHEI_PU_Gap_Code","Habitat_QHEI_Reach_Name","Habitat_QHEI_Event_Date",
+                                 "Water_Chemistry_Field_ID","Water_Chemistry_Field_PU_Gap_Code", "Water_Chemistry_Field_Reach_Name","Water_Chemistry_Field_Event_Date" ))
+
+
+names(habitat)[names(habitat) == "Invert_Abundance_PU_Gap_Code"]<- "PU_Gap_Code"
+names(habitat)[names(habitat) == "Invert_Abundance_Reach_Name"]<- "Reach_Name"
+names(habitat)[names(habitat) == "Invert_Abundance_Event_Date"]<- "Event_Date"
+
+write.csv(habitat, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysis/Invert/CREP_Invert_Habitat_Data.csv", row.names= F, na=".")
