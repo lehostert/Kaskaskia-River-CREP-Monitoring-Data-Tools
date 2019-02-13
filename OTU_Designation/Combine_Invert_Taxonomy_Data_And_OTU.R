@@ -6,7 +6,8 @@ library(tidyverse)
 ## sum is the first worksheet from the OTU summary .xlsx file. it lists each unique OTU formed, an 8-letter code, and unique 8-digit serial number
 ## Eight letter code is first 4 of genus + first 4 of species unless this combination is not unique
 ## serial numbers is '2019' + a unique 4-digit number because 2019 is the year of establishment of the OTU. 
-df <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/INV_LAB/INVLab_Combined_Edited_Names.csv", header = TRUE, na = "")
+
+df <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/INV_LAB/Invert_Abundance.csv", header = T, na = "")
 otu <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysis/Invert/OTU_Designation/CREP_Invert_Species_Matrix_OTU.csv", header = TRUE)
 sum <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysis/Invert/OTU_Designation/OTU_Code_Summary.csv", header = TRUE)
 #sum_2 <- readxl("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Invert_Analysis/CREP_OTU_Summary.xlsx", sheet = "OTU Summary")
@@ -15,7 +16,8 @@ sum <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysis/Invert
 
 sum <- sum %>% select(-c(X,OTU_Abundance,Resolution_Level))
 otu <- otu %>% select(TAXON_NAME, OTU_Suggestion, OTU_Level)
-df <- df %>% select(-c(X, EA_Dataset)) %>% filter(LIFE_STAGE == "Larvae")
+# df <- df %>% select(-c(X, EA_Dataset)) %>% filter(LIFE_STAGE == "Larvae")
+df <- df %>% select(-c(Invert_Abundance_ID)) %>% filter(LIFE_STAGE == "Larvae")
 
 CREP <-full_join(df,otu)
 CREP <- full_join(CREP,sum)
