@@ -27,24 +27,36 @@ pair_data <- habitat %>%
 # pair_data <- replace_na(pair_data)
 pair_data[is.na(pair_data)] <- 0
 
-pair_metrics <- pair_data %>%
-  select(-c("PU_Gap_Code", "Reach_Name", "Site_Type", "Pair_Number", "CRP_Class"))
+pair_data <- pair_data %>% select(-c(Site_ID))
 
-pair_metrics<- names(pair_data)[6:180]
+pair_metrics<- names(pair_data)[6:179]
 
-# metric_list <-colnames(pair_metrics)
+# Create boxplot for all metrics in pair_data. 
+
+# Like this but for all metrics, at once. 
+f <- ggplot(pair_data, aes(CRP_Class,RICHNESS))
+f + geom_boxplot()
+ggsave("botplot_test.pdf")
+
+box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(CRP_Class, INDIVIDUALS))
+box
+ggsave(box ,file = "box_test.pdf")
+
 # 
-# metric_list <- pair_data %>%
-#   select(-c("PU_Gap_Code", "Reach_Name", "Site_Type", "Pair_Number", "CRP_Class")) %>%
-#   colnames()
-
 for(metric in seq_along(pair_metrics)) {
   
-  f <- ggplot(pair_data, aes(CRP_Class, pair_metrics[metric]))
+  metric <- dplyr::enquo(metric) 
+  box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(CRP_Class, !!pair_metrics[metric]))
+  box
+  ggsave(box, file = paste0("boxplot_",pair_metrics[metric],"_by_CRP_Level.pdf"))
   
-  f + geom_boxplot() 
-  
-  ggsave(paste("boxplot_",pair_metrics[metric],"_by_CRP_Level.pdf"))
+}
+
+for(metric in seq_along(pair_metrics)) {
+
+  box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(CRP_Class, !!pair_metrics[metric]))
+  box
+  ggsave(box, file = paste0("boxplot_",pair_metrics[metric],"_by_CRP_Level.pdf"))
   
 }
 
@@ -53,7 +65,7 @@ for(metric in seq_along(metric_list)) {
 
 f <- ggplot(pair_data, aes(CRP_Class, metric))
 
-f+ geom_boxplot() 
+f + geom_boxplot() 
 
 ggsave(paste("boxplot_",metric_list[metric],"_by_CRP_Level.pdf"))
 
@@ -70,6 +82,8 @@ for (habitat_feature in seq_along(habitat_2_list)) {
   dev.off()
 }
 
+#
+
 ggplot(pair_data, aes(RICHNESS)) + geom_histogram(binwidth = 2)
 
 # f <- ggplot(pair_data, aes(CRP_Class,RICHNESS))
@@ -77,3 +91,6 @@ ggplot(pair_data, aes(RICHNESS)) + geom_histogram(binwidth = 2)
 # f+ geom_boxplot()
 # 
 # ggsave("botplot_test.pdf")
+
+leveneTest(, pair_data)
+anova()
