@@ -1,0 +1,37 @@
+TAXON_NAME,Total_Abundance,Site_Frequency,Kingdom,Phylum,Subphylum,Class,Subclass,Infraclass,Superorder,Order,Suborder,Infraorder,Superfamily,Family,Subfamily,Tribe,Subtribe,Genus,Subgenus,Species,Subspecies,hand_OTU_Suggestion,hand_OTU_Level,Notes,hand_Abundance_OTU
+Empheroptera,35,1,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,.,.,.,.,.,.,.,.,REMOVE,,RPKC,0
+Baetidae,2,2,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,.,.,.,.,REMOVE,,RPKC,0
+Acentrella parvula,21,6,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Acentrella,.,Acentrella parvula,.,Acentrella parvula,Species,,21
+Acerpenna pygmaea,244,21,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Acerpenna,.,Acerpenna pygmaea,.,Acerpenna,Genus,MCWP,244
+Acerpenna sp.,296,48,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Acerpenna,.,sp.,.,Acerpenna,Genus,MCWP,296
+Anafroptilum sp.,19,9,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Anafroptilum,.,sp.,.,Anafroptilum,Genus,,19
+Baetis flavistriga,235,29,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Baetis,.,Baetis flavistriga,.,Baetis flavistriga,Species,,235
+Baetis intercalaris,711,47,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Baetis,.,Baetis intercalaris,.,Baetis intercalaris,Species,,711
+Baetis sp.,5,4,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Baetis,.,sp.,.,REMOVE,,RPKC,0
+Callibaetis sp.,119,31,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Callibaetis,.,sp.,.,Callibaetis,Genus,,119
+Centroptilum sp.,48,19,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Centroptilum,.,sp.,.,Centroptilum,Genus,,48
+Labiobaetis frondalis,34,4,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Labiobaetis,.,Labiobaetis frondalis,.,Labiobaetis frondalis,Species,,34
+Paracloeodes minutus,27,8,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Paracloeodes,.,Paracloeodes minutus,.,Paracloeodes minutus,Species,,27
+Paracloeodes sp.,10,3,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Paracloeodes,.,sp.,.,REMOVE,,RPKC,0
+Plauditus sp.,25,6,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Plauditus,.,sp.,.,Plauditus,Genus,,25
+Procloeon sp.,1,1,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Procloeon,.,sp.,.,Procloeon,Genus,,1
+Pseudocloeon frondale,49,3,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Pseudocloeon,.,Pseudocloeon frondale,.,Pseudocloeon,Genus,MCWP,49
+Pseudocloeon sp.,281,10,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Baetidae,.,.,.,Pseudocloeon,.,sp.,.,Pseudocloeon,Genus,MCWP,281
+Caenis hilaris,27,5,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Caenidae,.,.,.,Caenis,.,Caenis hilaris,.,Caenis,Genus,MCWP,27
+Caenis latipennis,342,14,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Caenidae,.,.,.,Caenis,.,Caenis latipennis,.,Caenis,Genus,MCWP,342
+Caenis sp.,1238,74,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Caenidae,.,.,.,Caenis,.,sp.,.,Caenis,Genus,MCWP,1238
+Brachycercinae,2,1,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Caenidae,Brachycercinae,.,.,.,.,.,.,Brachycercinae,Subfamily,,2
+Hexagenia bilineata,4,3,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Ephemeridae,.,.,.,Hexagenia,.,Hexagenia bilineata,.,Hexagenia bilineata,Species,,4
+Hexagenia sp.,2,2,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Ephemeridae,.,.,.,Hexagenia,.,sp.,.,REMOVE,,RPKC,0
+Heptageniidae,7,6,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,.,.,.,.,REMOVE,,RPKC,0
+Heptagenia sp.,34,4,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Heptagenia,.,sp.,.,Heptagenia,Genus,,34
+Leucrocuta sp.,36,8,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Leucrocuta,.,sp.,.,Leucrocuta,Genus,,36
+Maccaffertium exiguum,21,3,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Maccaffertium,.,Maccaffertium exiguum,.,Maccaffertium exiguum,Species,,21
+Maccaffertium terminatum,29,5,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Maccaffertium,.,Maccaffertium terminatum,.,Maccaffertium terminatum,Species,,29
+Maccaffertium sp.,33,10,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Maccaffertium,.,sp.,.,REMOVE,,RPKC,0
+Nixe sp.,3,2,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Nixe,.,sp.,.,Nixe,Genus,,3
+Stenacron sp.,60,25,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Stenacron,.,sp.,.,REMOVE,,RPKC,0
+Stenacron interpunctatum,409,59,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Stenacron,.,Stenacron interpunctatum,.,Stenacron interpunctatum,Species,,409
+Stenonema femoratum,106,21,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Heptageniidae,.,.,.,Stenonema,.,Stenonema femoratum,.,Stenonema femoratum,Species,,106
+Isonychia sp.,4,2,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Isonychiidae,.,.,.,Isonychia,.,sp.,.,Isonychia,Genus,,4
+Tricorythodes sp.,1075,22,Animalia,Arthropoda,Hexapoda,Insecta,.,.,.,Ephemeroptera,.,.,.,Leptohyphidae,.,.,.,Tricorythodes,.,sp.,.,Tricorythodes,Genus,,1075

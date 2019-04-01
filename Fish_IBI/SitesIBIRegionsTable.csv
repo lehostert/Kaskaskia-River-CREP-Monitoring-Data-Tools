@@ -1,0 +1,41 @@
+OBJECTID,Join_Count,TARGET_FID,JOIN_FID,PU_Code,Gap_Code,PU_Gap_Code,Reach_Name,Event_Date,Event_Year,Event_Month,Event_Day,Latitude,Longitude,Stream_Name,Site_Type,Event_Purpose,IBIREGION_
+1,1,1,5,kasky,1009,kasky1009,kasky1009,2018-07-10 0:00,2018,7,10,39.30039,-88.65669,Brush Creek,random,summer_survey,9
+2,1,2,5,kasky,1025,kasky1025,kasky1025,2018-09-11 0:00,2018,9,11,39.2981,-89.15934,Ramsey Creek,paired,summer_survey,9
+3,0,3,-1,kasky,1077,kasky1077,kasky1077,2018-08-07 0:00,2018,8,7,39.290294,-89.43819297,Middle Fork Shoal Creek,random,summer_survey,10
+4,1,4,5,kasky,1143,kasky1143,kasky1143,2018-08-08 0:00,2018,8,8,39.274019,-88.749428,Richland Creek,random,summer_survey,9
+5,1,5,5,kasky,1237,kasky1237,kasky1237,2018-09-12 0:00,2018,9,12,39.23206,-89.18685,Elliot Creek,paired,summer_survey,9
+6,1,6,5,kasky,124,kasky124,kasky124,2018-07-12 0:00,2018,7,12,39.80687,-88.69678,Okaw River,random,summer_survey,9
+7,1,7,5,kasky,1263,kasky1263,kasky1263,2018-09-19 0:00,2018,9,19,39.223472,-88.841306,Holliday Tributary to Kaskaskia,less_disturbed,summer_survey,9
+8,1,8,5,kasky,1295,kasky1295,kasky1295,2018-10-01 0:00,2018,10,1,39.21536,-89.03,Tributary to Beck's Creek,less_disturbed,summer_survey,9
+9,0,9,-1,kasky,1349,kasky1349,kasky1349,2018-08-01 0:00,2018,8,1,39.207287,-89.34455,East Fork Shoal Creek,random,summer_survey,10
+10,1,10,5,kasky,1380,kasky1380,kasky1380,2018-07-24 0:00,2018,7,24,39.197913,-88.731057,Wolf Creek,random,summer_survey,9
+11,1,11,5,kasky,1392,kasky1392,kasky1392,2018-09-30 0:00,2018,9,30,39.18847,-89.25801,Hurricane Creek,paired,summer_survey,9
+12,0,12,-1,kasky,1474,kasky1474,kasky1474,2018-08-07 0:00,2018,8,7,39.173198,-89.361519,East Fork Shoal Creek,random,summer_survey,10
+13,1,13,5,kasky,1517,kasky1517,kasky1517,2018-10-01 0:00,2018,10,1,39.15395,-89.25558,Tributary to Hurricane Creek,paired,summer_survey,9
+14,1,14,5,kasky,157,kasky157,kasky157,2018-08-14 0:00,2018,8,14,39.76281,-88.60593,Hammond Mutal Ditch,paired,summer_survey,9
+15,1,15,5,kasky,1609,kasky1609,kasky1609,2018-09-20 0:00,2018,9,20,39.14425,-89.29864,Dry Fork,paired,summer_survey,9
+16,1,16,5,kasky,161,kasky161,kasky161,2018-08-14 0:00,2018,8,14,39.76832,-88.63437,West Okaw River,paired,summer_survey,9
+17,1,17,5,kasky,1668,kasky1668,kasky1668,2018-09-20 0:00,2018,9,20,39.11486,-89.28355,Lanes Branch,paired,summer_survey,9
+18,1,18,5,kasky,1749,kasky1749,kasky1749,2018-07-17 0:00,2018,7,17,39.08903,-89.05132,Ash Creek,random,summer_survey,9
+19,1,19,5,kasky,2095,kasky2095,kasky2095,2018-10-08 0:00,2018,10,8,38.99487,-89.02847,Camp Creek,paired,summer_survey,9
+20,0,20,-1,kasky,2117,kasky2117,kasky2117,2018-09-25 0:00,2018,9,25,38.97842,-89.41808,Trib to East Fork Shoal Creek,paired,summer_survey,10
+21,1,21,5,kasky,2153,kasky2153,kasky2153,2018-10-09 0:00,2018,10,9,38.96928,-88.97886,Sandy Run,paired,summer_survey,9
+22,0,22,-1,kasky,2240,kasky2240,kasky2240,2018-09-25 0:00,2018,9,25,38.93037,-89.42901,Trib to East Fork Shoal Creek,paired,summer_survey,10
+23,1,23,5,kasky,2288,kasky2288,kasky2288,2018-08-13 0:00,2018,8,13,38.917032,-88.862607,Little Hickory Creek,random,summer_survey,9
+24,1,24,5,kasky,2337,kasky2337,kasky2337,2018-07-18 0:00,2018,7,18,38.90269,-88.99461,Little Hickory Creek,random,summer_survey,9
+25,1,25,5,kasky,3008,kasky3008,kasky3008,2018-07-23 0:00,2018,7,23,38.722016,-88.980283,Jim's Creek,random,summer_survey,9
+26,1,26,5,kasky,3014,kasky3014,kasky3014,2018-10-09 0:00,2018,10,9,38.711167,-89.03075,Jim's Creek,less_disturbed,summer_survey,9
+27,0,27,-1,kasky,3340,kasky3340,kasky3340,2018-09-14 0:00,2018,9,14,38.616367,-89.779822,East Branch Little Silver Creek,random,summer_survey,10
+28,0,28,-1,kasky,3955,kasky3955,kasky3955,2018-09-26 0:00,2018,9,26,38.483353,-89.121726,Webster Creek,less_disturbed,summer_survey,10
+29,0,29,-1,kasky,4078,kasky4078,kasky4078,2018-08-27 0:00,2018,8,27,38.463153,-89.868332,Hazel Creek,random,summer_survey,10
+30,0,30,-1,kasky,4535,kasky4535,kasky4535,2018-08-27 0:00,2018,8,27,38.373525,-90.123023,Gerhardt Creek,random,summer_survey,10
+31,0,31,-1,kasky,5104,kasky5104,kasky5104,2018-08-29 0:00,2018,8,29,38.249,-89.83604,Doza Creek,random,summer_survey,10
+32,0,32,-1,kasky,5714,kasky5714,kasky5714,2018-08-28 0:00,2018,8,28,38.04623,-89.89252,Ninemile Creek,random,summer_survey,10
+33,1,33,5,kasky,761,kasky761,kasky761,2018-08-22 0:00,2018,8,22,39.46358,-88.86478,Robinson Creek,paired,summer_survey,9
+34,1,34,5,kasky,786,kasky786,kasky786,2018-08-22 0:00,2018,8,22,39.42051,-88.91116,Mud Creek,paired,summer_survey,9
+35,1,35,5,kasky,843,kasky843,kasky843,2018-07-11 0:00,2018,7,11,39.3747,-88.62891,Richland Creek,random,summer_survey,9
+36,1,36,5,kasky,85,kasky85,kasky85,2018-07-05 0:00,2018,7,5,39.857375,-88.495861,Lake Fork,random,summer_survey,9
+37,0,37,-1,kasky,895,kasky895,kasky895,2018-08-02 0:00,2018,8,2,39.343078,-89.382271,Middle Fork Shoal Creek,random,summer_survey,10
+38,1,38,5,kasky,939,kasky939,kasky939,2018-08-23 0:00,2018,8,23,39.32577,-88.932,Mitchell Creek,paired,summer_survey,9
+39,1,39,5,kasky,957,kasky957,kasky957,2018-08-23 0:00,2018,8,23,39.31557,-88.93636,West Fork Mitchell Creek,paired,summer_survey,9
+40,0,40,-1,kasky,985,kasky985,kasky985,2018-07-31 0:00,2018,7,31,39.308822,-89.578491,West Fork Shoal Creek,random,summer_survey,10
