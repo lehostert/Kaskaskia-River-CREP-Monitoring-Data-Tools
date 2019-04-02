@@ -4,6 +4,7 @@ fish <- readr::read_csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysi
 habitat <- readr::read_csv("~/CREP/Analysis/Paired_Sites/Paired_Site_Characteristics.csv")
 
 habitat$Event_Date <- as.Date(habitat$Habitat_IHI_Event_Date, "%m/%d/%Y")
+habitat <- habitat[,c(1:5,57,6:56)]
 
 paired_site_list <- habitat %>%
   select(PU_Gap_Code, Reach_Name, Site_Type, Pair_Number, CRP_Class, Event_Date)
@@ -22,75 +23,49 @@ paired_fish<- paired_site_list %>%
 
 pair_data <- habitat %>%
   select(-c(Visual_Water_Clarity, Chloride, Chloride_QU, Habitat_IHI_Event_Date, Habitat_QHEI_Event_Date, Water_Chemistry_Field_Event_Date)) %>%
-  right_join(paired_fish)
+  right_join(paired_fish, c("PU_Gap_Code", "Reach_Name", "Site_Type", "Pair_Number", "CRP_Class", "Event_Date"))
 
+# replace 
 # pair_data <- replace_na(pair_data)
 pair_data[is.na(pair_data)] <- 0
 
+#Remove Site_ID it is inocmplete and unncessary
 pair_data <- pair_data %>% select(-c(Site_ID))
 
-pair_metrics<- names(pair_data)[6:179]
+#Select only continuous variables to make plots with.
+pair_metrics<- names(pair_data[,c(7:16,23:179)])
 
 # Create boxplot for all metrics in pair_data. 
 
 # Like this but for all metrics, at once. 
-f <- ggplot(pair_data, aes(CRP_Class,RICHNESS))
-f + geom_boxplot()
-ggsave("botplot_test.pdf")
-
-box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(CRP_Class, INDIVIDUALS))
-box
-ggsave(box ,file = "box_test.pdf")
-
+# f <- ggplot(pair_data, aes(CRP_Class,RICHNESS))
+# f + geom_boxplot()
+# ggsave("botplot_test.pdf")
 # 
-for(metric in seq_along(pair_metrics)) {
-  
-  metric <- dplyr::enquo(metric) 
-  box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(CRP_Class, !!pair_metrics[metric]))
-  box
-  ggsave(box, file = paste0("boxplot_",pair_metrics[metric],"_by_CRP_Level.pdf"))
-  
-}
-
-for(metric in seq_along(pair_metrics)) {
-
-  box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(CRP_Class, !!pair_metrics[metric]))
-  box
-  ggsave(box, file = paste0("boxplot_",pair_metrics[metric],"_by_CRP_Level.pdf"))
-  
-}
-
-
-for(metric in seq_along(metric_list)) {
-
-f <- ggplot(pair_data, aes(CRP_Class, metric))
-
-f + geom_boxplot() 
-
-ggsave(paste("boxplot_",metric_list[metric],"_by_CRP_Level.pdf"))
-
-}
-
-
-
-habitat_2_list <- rownames(imp_fish_RF1) 
-
-for (habitat_feature in seq_along(habitat_2_list)) {
-  file_out <- paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Output/fish_RF1/fish_RF1_PP_", habitat_2_list[habitat_feature], ".pdf")
-  pdf(file_out)
-  partialPlot(fish_RF1, habitat_2, habitat_2_list[habitat_feature], main = paste("Partial Dependancy Plot on", habitat_2_list[habitat_feature]), xlab = paste(habitat_2_list[habitat_feature]))
-  dev.off()
-}
+# box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(CRP_Class, INDIVIDUALS))
+# box
+# ggsave(box ,file = "box_test.pdf")
 
 #
 
-ggplot(pair_data, aes(RICHNESS)) + geom_histogram(binwidth = 2)
+for(metric in seq_along(pair_metrics)) {
+  
+  box <- ggplot(data = pair_data) + geom_boxplot(mapping = aes(x = CRP_Class, y = get(pair_metrics[metric])))
+  box
+  ggsave(box, file = paste0(pair_metrics[metric],"_by_CRP_Level_boxplot.pdf"))
+  
+  histogram <- ggplot(pair_data, aes(get(pair_metrics[metric]))) + geom_histogram(binwidth = 2)
+  ggsave(histogram, file = paste0(pair_metrics[metric],"_histogram.pdf"))
+  
+}
 
-# f <- ggplot(pair_data, aes(CRP_Class,RICHNESS))
-# 
-# f+ geom_boxplot()
-# 
-# ggsave("botplot_test.pdf")
+# The above solution is based on the get funtion. 
+# It takes a character string as input and looks if there is a variable with the same name. If there is, it gives this variable.
 
-leveneTest(, pair_data)
-anova()
+# 
+
+
+
+
+# leveneTest(, pair_data)
+#  repeated measures anova()
