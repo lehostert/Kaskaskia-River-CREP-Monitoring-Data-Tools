@@ -1,36 +1,35 @@
 library(tidyverse)
 
+#Read in data for fish metrics and habitat info for paired sites
 fish <- readr::read_csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Output/Fish_Metrics.csv", na = ".")
 habitat <- readr::read_csv("~/CREP/Analysis/Paired_Sites/Paired_Site_Characteristics.csv")
 
+#Create event date from Access stored date
 habitat$Event_Date <- as.Date(habitat$Habitat_IHI_Event_Date, "%m/%d/%Y")
 habitat <- habitat[,c(1:5,57,6:56)]
 
+#Create list of paired sites from habitat output from access
 paired_site_list <- habitat %>%
   select(PU_Gap_Code, Reach_Name, Site_Type, Pair_Number, CRP_Class, Event_Date)
 
+#Add site characteristics from Site_ID created with fish metrics
 fish$Reach_Name <- as.character(stringr::str_extract_all(fish$Site_ID, "[:alnum:]+(?=\\_)"))
-
 fish$Event_Date <- stringr::str_extract_all(fish$Site_ID, "(?<=\\_)[:digit:]+")
-
 fish$Event_Date <- as.Date(as.character(fish$Event_Date), "%Y%m%d")
 
-# fish$Event_Date <- as.Date(as.character(stringr::str_extract_all(fish$Site_ID, "(?<=\\_)[:digit:]+")))
-
+#Select only fish metrics from paired sites
 paired_fish<- paired_site_list %>%
   left_join(fish, by = c('Reach_Name', 'Event_Date'))
 
+# Replace NA form fish metrics with 0. No fish data were collected at that site. 
+# paired_fish[is.na(paired_fish)] <- 0
 
+# Create pair_data with habitat and fish metrics combined
+# This also removes unnecessary collumns before and after the join
 pair_data <- habitat %>%
   select(-c(Visual_Water_Clarity, Chloride, Chloride_QU, Habitat_IHI_Event_Date, Habitat_QHEI_Event_Date, Water_Chemistry_Field_Event_Date)) %>%
-  right_join(paired_fish, c("PU_Gap_Code", "Reach_Name", "Site_Type", "Pair_Number", "CRP_Class", "Event_Date"))
-
-# replace 
-# pair_data <- replace_na(pair_data)
-pair_data[is.na(pair_data)] <- 0
-
-#Remove Site_ID it is inocmplete and unncessary
-pair_data <- pair_data %>% select(-c(Site_ID))
+  right_join(paired_fish, c("PU_Gap_Code", "Reach_Name", "Site_Type", "Pair_Number", "CRP_Class", "Event_Date")) %>%
+  select(-c(Site_ID))
 
 #Select only continuous variables to make plots with.
 pair_metrics<- names(pair_data[,c(7:16,23:179)])
@@ -54,17 +53,14 @@ for(metric in seq_along(pair_metrics)) {
 
 # error <- ggplot(data = pair_data, aes(x = lubridate::year(Event_Date), y = INDIVIDUALS, color = CRP_Class, ymin = fit-se, ymax = fit+se)) + 
 #   geom_errorbar()
-# 
-# error
+
 
 pair_data$Year <- lubridate::year(pair_data$Event_Date)
 brief_pair_data <- pair_data %>% 
   select(c(Reach_Name, Site_Type, Pair_Number, CRP_Class, Year, IHI_Score, 
-           QHEI_Score, DO, Turbidity, Nitrate, Ammonia, Orthophosphate, TOLRPIND, INTOLPIND, SENSPIND))
+           QHEI_Score, DO, Turbidity, Nitrate, Ammonia, Orthophosphate, RICHNESS, DIVERSITY, TOLRPIND, INTOLPIND, SENSPIND))
 
-brief_pair_data[12,7]= NA
-
-#Normality
+##Normality
 PD_2016_low <- brief_pair_data %>% 
   filter(Year == 2016, CRP_Class == "low")
 PD_2017_low <- brief_pair_data %>% 
@@ -99,6 +95,12 @@ shapiro.test(PD_2018_low$Ammonia)
 shapiro.test(PD_2016_low$Orthophosphate)
 shapiro.test(PD_2017_low$Orthophosphate)
 shapiro.test(PD_2018_low$Orthophosphate)
+shapiro.test(PD_2016_low$RICHNESS)
+shapiro.test(PD_2017_low$RICHNESS)
+shapiro.test(PD_2018_low$RICHNESS)
+shapiro.test(PD_2016_low$DIVERSITY)
+shapiro.test(PD_2017_low$DIVERSITY)
+shapiro.test(PD_2018_low$DIVERSITY)
 shapiro.test(PD_2016_low$TOLRPIND)
 shapiro.test(PD_2017_low$TOLRPIND)
 shapiro.test(PD_2018_low$TOLRPIND)
@@ -131,6 +133,12 @@ shapiro.test(PD_2018_high$Ammonia)
 shapiro.test(PD_2016_high$Orthophosphate)
 shapiro.test(PD_2017_high$Orthophosphate)
 shapiro.test(PD_2018_high$Orthophosphate)
+shapiro.test(PD_2016_high$RICHNESS)
+shapiro.test(PD_2017_high$RICHNESS)
+shapiro.test(PD_2018_high$RICHNESS)
+shapiro.test(PD_2016_high$DIVERSITY)
+shapiro.test(PD_2017_high$DIVERSITY)
+shapiro.test(PD_2018_high$DIVERSITY)
 shapiro.test(PD_2016_high$TOLRPIND)
 shapiro.test(PD_2017_high$TOLRPIND)
 shapiro.test(PD_2018_high$TOLRPIND)
@@ -152,6 +160,7 @@ leveneTest(DO ~ CRP_Class*Year, data = brief_pair_data)
 leveneTest(Turbidity ~ CRP_Class*Year, data = brief_pair_data)
 leveneTest(Orthophosphate ~ CRP_Class*Year, data = brief_pair_data)
 leveneTest(INTOLPIND ~ CRP_Class*Year, data = brief_pair_data)
+
 
 # Bartlett Test- Homogeneity of Varience
 
@@ -205,6 +214,7 @@ summary(aov_Turbidity_class_year)
 #Nitrate
 aov_Nitrate_class_year <- aov(Nitrate ~ CRP_Class*Year + Error(Reach_Name/Year), data = brief_pair_data)
 summary(aov_Nitrate_class_year)
+
 
 
 
