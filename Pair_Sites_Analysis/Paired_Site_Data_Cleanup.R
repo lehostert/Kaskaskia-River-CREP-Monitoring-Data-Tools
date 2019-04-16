@@ -31,7 +31,11 @@ pair_data <- habitat %>%
   right_join(paired_fish, c("PU_Gap_Code", "Reach_Name", "Site_Type", "Pair_Number", "CRP_Class", "Event_Date")) %>%
   select(-c(Site_ID))
 
-#Select only continuous variables to make plots with.
+
+pair_data_all <- select(pair_data, -ends_with("NIND"))
+
+
+#Select names of only continuous variables to make plots with.
 pair_metrics<- names(pair_data[,c(7:16,23:179)])
 
 # Create boxplot for all metrics in pair_data. 
@@ -215,6 +219,5 @@ summary(aov_Turbidity_class_year)
 aov_Nitrate_class_year <- aov(Nitrate ~ CRP_Class*Year + Error(Reach_Name/Year), data = brief_pair_data)
 summary(aov_Nitrate_class_year)
 
-
-
-
+# write.csv(pair_data, file= "~/CREP/Analysis/Paired_Sites/Paired_Site_AllData.csv", row.names = F)
+# write.csv(test, file= "~/CREP/Analysis/Paired_Sites/Paired_Site_AllData2.csv", row.names = F)
