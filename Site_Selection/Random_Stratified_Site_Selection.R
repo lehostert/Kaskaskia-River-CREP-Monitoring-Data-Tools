@@ -33,3 +33,73 @@ write.csv(sites, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites
 ##Less-disturbed sites selected  by filtering for proportion local CRP
 # ldsites <- df %>%
 #   filter(prop_local_CRP >= 0.50)
+
+set.seed(year)
+extra_lower_sites <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  group_by(size_class) %>%
+  sample_n(6, replace = TRUE)
+
+
+write.csv(extra_lower_sites, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower.csv"), row.names = F)
+
+##### TEst
+
+set.seed(year)
+extra_lower_sites_by7 <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  group_by(size_class) %>%
+  sample_n(7, replace = TRUE)
+
+
+write.csv(extra_lower_sites_by7, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by7.csv"), row.names = F)
+
+set.seed(year)
+extra_lower_sites_by8 <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  group_by(size_class) %>%
+  sample_n(8, replace = TRUE)
+
+
+write.csv(extra_lower_sites_by8, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by8.csv"), row.names = F)
+
+set.seed(year)
+extra_lower_sites_by9 <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  group_by(size_class) %>%
+  sample_n(9, replace = TRUE)
+
+
+write.csv(extra_lower_sites_by9, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by9.csv"), row.names = F)
+
+
+set.seed(year)
+extra_lower_sites_by10 <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  group_by(size_class) %>%
+  sample_n(10, replace = TRUE)
+
+
+write.csv(extra_lower_sites_by10, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by10.csv"), row.names = F)
+
+set.seed(year)
+extra_lower_sites_by18 <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  group_by(size_class) %>%
+  sample_n(18, replace = TRUE)
+
+
+write.csv(extra_lower_sites_by18, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by18.csv"), row.names = F)
+
+set.seed(year)
+extra_lower_sites_by17 <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  group_by(size_class) %>%
+  sample_n(17, replace = TRUE)
+
+
+write.csv(extra_lower_sites_by17, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by17.csv"), row.names = F)
+
+extra_lower_sites_Large <-  df %>%
+  filter(HUC8_Basin_Name == 'Lower') %>% 
+  filter(size_class == '2')
