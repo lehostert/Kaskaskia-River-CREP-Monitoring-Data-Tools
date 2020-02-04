@@ -29,9 +29,6 @@ FSH_abundance$Release_status <- str_replace(FSH_abundance$Release_status, "vouch
 FSH_abundance <- rename(FSH_abundance, Count = n)
 FSH_abundance$Collection_Method <- "Electrofishing"
 FSH_abundance$Event_Date <- as.Date(FSH_abundance$Event_Date, format = "%m/%d/%Y")
- 
-# write.csv(FSH_abundance, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/DB_Ingest/FSH_2019.csv")
-# fsh <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_2018.csv", header = T, na = ".")
 
 
 #### Read in Location Data ####
@@ -46,3 +43,11 @@ fish_sum <- full_join(FSH_abundance, loc)
 fish_sum <- fish_sum %>% select(c(PU_Gap_Code, Latitude, Longitude, Stream_Name, Event_Date, Fish_Species_Common, Fish_Species_Scientific, Count, Collection_Method, Release_status))
 
 write_excel_csv(fish_sum, path = "~/CREP/Permits/2019/2019_Fish_Summary.csv", delim = ",")
+
+#### DB Ingest ####
+
+FSH_abundance <- rename(FSH_abundance, Fish_Species_Count = Count)
+FSH_abundance <- rename(FSH_abundance, Fish_Species_Code = Species_Code)
+FSH_abundance <- FSH_abundance %>% select(c(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, Fish_Species_Count))
+write_excel_csv(FSH_abundance, path = "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_2019.csv")
+# fsh <- read.csv("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_2018.csv", header = T, na = ".")
