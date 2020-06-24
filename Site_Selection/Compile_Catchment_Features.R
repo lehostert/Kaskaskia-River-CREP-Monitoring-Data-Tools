@@ -40,12 +40,6 @@ kasky_summary$size_class <- ifelse(kasky_summary$LINK <11,
                                              2
                                    )
 
-
-#########
-df <- read.csv("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/PU_Gaps_size_and_CRP_classes.csv")
-###
-
-
 df <- read.csv("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/PU_Gaps_size_and_CRP_classes.csv")
 
 df_orig <- df %>%
