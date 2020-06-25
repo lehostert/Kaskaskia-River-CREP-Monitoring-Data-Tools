@@ -1,8 +1,16 @@
 library(tidyverse)
 
+network_prefix <- "//INHS-Bison" #Lauren's Desktop PC
+# network_prefix <- "/Volumes" #Lauren's Mac Laptop
+
 ## Add in data for all of the Kaskaskia River PU Gaps
 catchment_features <- read_csv("C:/Users/lhostert/Documents/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Site_Selection/Data/Kaskaskia_Catchment_Sizes_and_Features.csv")
-year <- 2019
+extra_features <- read_csv(file = paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/kasky_landuse_geology_metrics_revised.csv"))
+
+extra_catchment_features <- extra_features %>% select("PU_Gap_Code", "W_SLOPE", "WT_SLOPE", "GRADIENT", "W_CREPCRP_Percent","W_HEL_Percent")
+catchment_features <- catchment_features %>% left_join(extra_catchment_features, by = "PU_Gap_Code")
+
+year <- 2020
 
 
 ## Less Disturbed Sites are selected- At the PU_Gap 24k Watershed level but combine all LD landuse types within a single PU
@@ -130,7 +138,21 @@ LD_sites_WT_all <- kasky_landuse_WT %>%
 
 LD_sites_W_and_WT_overlap <- inner_join(LD_sites_W_all, LD_sites_WT_all, by = 'PU_Gap_Code')
 
-LD_sites <- LD_sites_W_and_WT %>%  sample_n(30, replace = TRUE)
+LD_sites <- LD_sites_W_and_WT_overlap %>%  sample_n(30, replace = TRUE)
+
+######################## Refactor
+
+LD_sites_2 <- kasky_landuse_W %>% 
+  full_join(kasky_landuse_WT, by = c('PU_Gap_Code', 'PU_Code', 'Gap_Code')) %>% 
+  select(PU_Gap_Code, PU_Code, Gap_Code, W_LU_Disturbed, W_LU_Undisturbed, W_Undisturbed_Level, WT_LU_Disturbed, WT_LU_Undisturbed, WT_Undisturbed_Level) %>% 
+  filter(W_Undisturbed_Level == 'Medium-High' | W_Undisturbed_Level == 'High',
+         WT_Undisturbed_Level == 'Medium-High' | WT_Undisturbed_Level == 'High'
+         ) %>% 
+  sample_n(30, replace = TRUE)
+
+### 
+#TODO compate LD_sites with LD_sites_2. should be pretty similar. 
+
 
 ########################
 
