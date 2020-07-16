@@ -3,7 +3,7 @@
 library(tidyverse)
 
 df <- read_csv("C:/Users/lhostert/Documents/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Site_Selection/Data/Kaskaskia_Catchment_Sizes_and_Features.csv")
-year <- 2019
+year <- 2020
 
 
 ## Random Sites selected- 5 sites per each basin, size, CRP combo due to the limits of each category.
@@ -22,8 +22,15 @@ year <- 2019
 set.seed(year)
 sites <-  df %>%
   group_by(HUC8_Basin_Name, size_class) %>%
-  sample_n(6, replace = TRUE)
+  sample_n(6, replace = TRUE) %>% 
+  ungroup()
 
+## You should probably change 6 to 10
+
+random_pugap_only <- sites %>% 
+  select(PU_Gap_Code)
+
+write.csv(random_pugap_only, file = paste0("~/CREP/R_Scripts/Sites/", year,"_SiteSelection_gaponly.csv"), row.names = F)  
 
 ##Export to .csv
 
@@ -43,24 +50,44 @@ extra_lower_sites <-  df %>%
 
 write.csv(extra_lower_sites, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower.csv"), row.names = F)
 
-##### TEst
+##### Additional Sites
 
 set.seed(year)
-extra_lower_sites_by7 <-  df %>%
+extra_upper_sites_by10 <-  df %>%
+  filter(HUC8_Basin_Name == 'Upper') %>% 
+  group_by(size_class) %>%
+  sample_n(10, replace = TRUE)
+write.csv(extra_upper_sites_by10, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Upper_by10.csv"), row.names = F)
+
+set.seed(year)
+extra_middle_sites_by10 <-  df %>%
+  filter(HUC8_Basin_Name == 'Middle') %>% 
+  group_by(size_class) %>%
+  sample_n(10, replace = TRUE)
+write.csv(extra_middle_sites_by10, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Middle_by10.csv"), row.names = F)
+
+set.seed(year)
+extra_shoal_sites_by10 <-  df %>%
+  filter(HUC8_Basin_Name == 'Shoal') %>% 
+  group_by(size_class) %>%
+  sample_n(10, replace = TRUE)
+write.csv(extra_shoal_sites_by10, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Shoal_by10.csv"), row.names = F)
+
+set.seed(year)
+extra_lower_sites_by10 <-  df %>%
   filter(HUC8_Basin_Name == 'Lower') %>% 
   group_by(size_class) %>%
-  sample_n(7, replace = TRUE)
+  sample_n(10, replace = TRUE)
+write.csv(extra_lower_sites_by10, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by10.csv"), row.names = F)
 
-
-write.csv(extra_lower_sites_by7, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by7.csv"), row.names = F)
+extra_sites<- bind_rows(extra_lower_sites_by10, extra_middle_sites_by10, extra_shoal_sites_by10,extra_upper_sites_by10)
+write.csv(extra_sites, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_by10.csv"), row.names = F)
 
 set.seed(year)
 extra_lower_sites_by8 <-  df %>%
   filter(HUC8_Basin_Name == 'Lower') %>% 
   group_by(size_class) %>%
   sample_n(8, replace = TRUE)
-
-
 write.csv(extra_lower_sites_by8, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by8.csv"), row.names = F)
 
 set.seed(year)
@@ -68,8 +95,6 @@ extra_lower_sites_by9 <-  df %>%
   filter(HUC8_Basin_Name == 'Lower') %>% 
   group_by(size_class) %>%
   sample_n(9, replace = TRUE)
-
-
 write.csv(extra_lower_sites_by9, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by9.csv"), row.names = F)
 
 
@@ -78,8 +103,6 @@ extra_lower_sites_by10 <-  df %>%
   filter(HUC8_Basin_Name == 'Lower') %>% 
   group_by(size_class) %>%
   sample_n(10, replace = TRUE)
-
-
 write.csv(extra_lower_sites_by10, file = paste0("C:/Users/lhostert/Documents/CREP/R_Scripts/Sites/", year,"_SiteSelection_Extra_Lower_by10.csv"), row.names = F)
 
 set.seed(year)
@@ -103,3 +126,5 @@ write.csv(extra_lower_sites_by17, file = paste0("C:/Users/lhostert/Documents/CRE
 extra_lower_sites_Large <-  df %>%
   filter(HUC8_Basin_Name == 'Lower') %>% 
   filter(size_class == '2')
+
+### Additional Sites

@@ -9,6 +9,7 @@ extra_features <- read_csv(file = paste0(network_prefix,"/ResearchData/Groups/Ka
 
 extra_catchment_features <- extra_features %>% select("PU_Gap_Code", "W_SLOPE", "WT_SLOPE", "GRADIENT", "W_CREPCRP_Percent","W_HEL_Percent")
 catchment_features <- catchment_features %>% left_join(extra_catchment_features, by = "PU_Gap_Code")
+catchment_features$Gap_Code <- as.character(catchment_features$Gap_Code)
 
 year <- 2020
 
@@ -150,8 +151,23 @@ LD_sites_2 <- kasky_landuse_W %>%
          ) %>% 
   sample_n(30, replace = TRUE)
 
+LD_sites_final <- catchment_features %>% 
+  select(1:4, 13, 24:36) %>%
+  right_join(LD_sites_2)
+
+write.csv(LD_sites_final, file = paste0("~/CREP/R_Scripts/Sites/", year,"_SiteSelection_LeastDisturbed.csv"), row.names = F)
+
+ld_pugap_only <- LD_sites_final %>% 
+  select(PU_Gap_Code)
+
+write.csv(ld_pugap_only, file = paste0("~/CREP/R_Scripts/Sites/", year,"_SiteSelection_LeastDisturbed_gaponly.csv"), row.names = F)  
 ### 
-#TODO compate LD_sites with LD_sites_2. should be pretty similar. 
+#TODO compare LD_sites with LD_sites_2. should be pretty similar. 
+
+LD_sites <- LD_sites %>% 
+  rename(PU_Code = PU_Code.x,
+         Gap_Code = Gap_Code.x) %>% 
+  select(PU_Gap_Code, PU_Code, Gap_Code, W_LU_Disturbed, W_LU_Undisturbed, W_Undisturbed_Level, WT_LU_Disturbed, WT_LU_Undisturbed, WT_Undisturbed_Level)
 
 
 ########################
@@ -175,3 +191,4 @@ Find_me <- review %>%
 ##Less-disturbed sites selected  by filtering for proportion local CRP
 # ldsites <- df %>%
 #   filter(prop_local_CRP >= 0.50)
+
