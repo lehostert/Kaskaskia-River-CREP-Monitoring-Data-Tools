@@ -192,3 +192,15 @@ Find_me <- review %>%
 # ldsites <- df %>%
 #   filter(prop_local_CRP >= 0.50)
 
+####FINDING ALERNATIVE LD SITES
+
+LD_sites_list <- kasky_landuse_W %>% 
+  full_join(kasky_landuse_WT, by = c('PU_Gap_Code', 'PU_Code', 'Gap_Code')) %>% 
+  select(PU_Gap_Code, PU_Code, Gap_Code, W_LU_Disturbed, W_LU_Undisturbed, W_Undisturbed_Level, WT_LU_Disturbed, WT_LU_Undisturbed, WT_Undisturbed_Level) %>% 
+  filter(W_Undisturbed_Level == 'Medium-High' | W_Undisturbed_Level == 'High',
+         WT_Undisturbed_Level == 'Medium-High' | WT_Undisturbed_Level == 'High')
+
+LD_sites_list_final <- catchment_features %>% 
+  select(1:4, 13, 24:36) %>%
+  right_join(LD_sites_list) %>%
+  filter(size_class == 1, Link >1)
