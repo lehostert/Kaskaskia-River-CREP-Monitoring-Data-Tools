@@ -1,8 +1,17 @@
 library(tidyverse)
 
+network_prefix <- "//INHS-Bison" #Lauren's Desktop PC
+# network_prefix <- "/Volumes" #Lauren's Mac Laptop
+
 ## Add in data for all of the Kaskaskia River PU Gaps
 catchment_features <- read_csv("C:/Users/lhostert/Documents/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Site_Selection/Data/Kaskaskia_Catchment_Sizes_and_Features.csv")
-year <- 2019
+extra_features <- read_csv(file = paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/kasky_landuse_geology_metrics_revised.csv"))
+
+extra_catchment_features <- extra_features %>% select("PU_Gap_Code", "W_SLOPE", "WT_SLOPE", "GRADIENT", "W_CREPCRP_Percent","W_HEL_Percent")
+catchment_features <- catchment_features %>% left_join(extra_catchment_features, by = "PU_Gap_Code")
+catchment_features$Gap_Code <- as.character(catchment_features$Gap_Code)
+
+year <- 2020
 
 
 ## Less Disturbed Sites are selected- At the PU_Gap 24k Watershed level but combine all LD landuse types within a single PU
@@ -130,7 +139,36 @@ LD_sites_WT_all <- kasky_landuse_WT %>%
 
 LD_sites_W_and_WT_overlap <- inner_join(LD_sites_W_all, LD_sites_WT_all, by = 'PU_Gap_Code')
 
-LD_sites <- LD_sites_W_and_WT %>%  sample_n(30, replace = TRUE)
+LD_sites <- LD_sites_W_and_WT_overlap %>%  sample_n(30, replace = TRUE)
+
+######################## Refactor
+
+LD_sites_2 <- kasky_landuse_W %>% 
+  full_join(kasky_landuse_WT, by = c('PU_Gap_Code', 'PU_Code', 'Gap_Code')) %>% 
+  select(PU_Gap_Code, PU_Code, Gap_Code, W_LU_Disturbed, W_LU_Undisturbed, W_Undisturbed_Level, WT_LU_Disturbed, WT_LU_Undisturbed, WT_Undisturbed_Level) %>% 
+  filter(W_Undisturbed_Level == 'Medium-High' | W_Undisturbed_Level == 'High',
+         WT_Undisturbed_Level == 'Medium-High' | WT_Undisturbed_Level == 'High'
+         ) %>% 
+  sample_n(30, replace = TRUE)
+
+LD_sites_final <- catchment_features %>% 
+  select(1:4, 13, 24:36) %>%
+  right_join(LD_sites_2)
+
+write.csv(LD_sites_final, file = paste0("~/CREP/R_Scripts/Sites/", year,"_SiteSelection_LeastDisturbed.csv"), row.names = F)
+
+ld_pugap_only <- LD_sites_final %>% 
+  select(PU_Gap_Code)
+
+write.csv(ld_pugap_only, file = paste0("~/CREP/R_Scripts/Sites/", year,"_SiteSelection_LeastDisturbed_gaponly.csv"), row.names = F)  
+### 
+#TODO compare LD_sites with LD_sites_2. should be pretty similar. 
+
+LD_sites <- LD_sites %>% 
+  rename(PU_Code = PU_Code.x,
+         Gap_Code = Gap_Code.x) %>% 
+  select(PU_Gap_Code, PU_Code, Gap_Code, W_LU_Disturbed, W_LU_Undisturbed, W_Undisturbed_Level, WT_LU_Disturbed, WT_LU_Undisturbed, WT_Undisturbed_Level)
+
 
 ########################
 
@@ -153,3 +191,32 @@ Find_me <- review %>%
 ##Less-disturbed sites selected  by filtering for proportion local CRP
 # ldsites <- df %>%
 #   filter(prop_local_CRP >= 0.50)
+
+####FINDING ALERNATIVE LD SITES
+
+LD_sites_list <- kasky_landuse_W %>% 
+  full_join(kasky_landuse_WT, by = c('PU_Gap_Code', 'PU_Code', 'Gap_Code')) %>% 
+  select(PU_Gap_Code, PU_Code, Gap_Code, W_LU_Disturbed, W_LU_Undisturbed, W_Undisturbed_Level, WT_LU_Disturbed, WT_LU_Undisturbed, WT_Undisturbed_Level) 
+
+%>% 
+  filter(W_Undisturbed_Level == 'Medium-High' | W_Undisturbed_Level == 'High',
+         WT_Undisturbed_Level == 'Medium-High' | WT_Undisturbed_Level == 'High')
+
+LD_sites_list <- catchment_features %>% 
+  select(1:4, 13, 24:36) %>%
+  right_join(LD_sites_list)
+
+
+# LD_sites_best <- catchment_features %>% 
+#   select(1:4, 13, 24:36) %>%
+#   right_join(LD_sites_list) %>%
+#   filter(size_class == 1, 
+#          Link >1,
+#          W_Undisturbed_Level == 'Medium-High' | W_Undisturbed_Level == 'High',
+#          WT_Undisturbed_Level == 'Medium-High' | WT_Undisturbed_Level == 'High')
+
+LD_sites_best <- LD_sites_list %>% 
+  filter(size_class == 1, 
+         Link >1,
+         W_Undisturbed_Level == 'Medium-High' | W_Undisturbed_Level == 'High',
+         WT_Undisturbed_Level == 'Medium-High' | WT_Undisturbed_Level == 'High')
