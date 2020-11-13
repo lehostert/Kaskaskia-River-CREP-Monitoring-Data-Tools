@@ -37,12 +37,15 @@ per_year_summary <- summarise(summary_fish_ave,
           mean = mean(total_fish),
           sd = sd(total_fish),
           sem = se(total_fish),
-          n = n()
+          n = n(),
+          min = min(total_fish),
+          max = max(total_fish)
           )
 
 #per site summary 
 per_site_summary <- summarise(summary_fish, 
                               mean = mean(total_fish),
+                              median = median(total_fish),
                               sd = sd(total_fish),
                               sem = se(total_fish),
                               n = n(),
@@ -62,6 +65,10 @@ mort <- bind_rows(f19, f18_fix) %>%
   summarise(
     total_fish = sum(Count))%>% 
   ungroup()
+
+## Estimated 2013-2017 only 20 fish were vouchered for donation to INHS Museum Collection. 
+
+# mort$Release_status <- if_else(mort$Release_status = "", "", )
 
 #TODO Find a way to get the ratio of mortality to released total for 2018 & 2019 as well as mort ratio by year. 
 
