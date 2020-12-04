@@ -1,21 +1,54 @@
 ##### The following sets of commands intend to take all .csv files from their respective "Data_In" folders and combine them into
 ## one file for appending to CREP Access Database. Each data types are in comment before script section.
 
+####
 library(tidyverse)
-sampling_year <- 2019
+sampling_year <- 2020
+data_type <- "DSC"
+# collumns <- c("text", "text", "text","date", "date", "text", "text", "text", "numeric", "numeric",
+#               "text","text", "text", "text", "text", "text", "text", "text", "text", "text")
+collumns<- c("text", "text","date", "date","numeric","numeric","numeric","numeric","numeric","numeric")
+# filter <- 
+
+### Generic
+data_filenames <- list.files(path= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type), pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
+data_fullpath = file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type, data_filenames)
+data_fulldataset <- do.call("rbind",lapply(data_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 2, na = c(".",""), col_types = collumns)}))
+
+data_dataset <- data_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
+data_dataset$Reach_Name <- stringr::str_replace(data_dataset$Reach_Name, "kasky[:blank:]|Kasky[:blank:]","kasky") %>% 
+  stringr::str_replace(data_dataset$Reach_Name, "copper[:blank:]|copper|Copper","Copper ")
+
+write.csv(data_dataset, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/","TEST_",data_type, "_", sampling_year,".csv"), na= "", row.names = F)
+
+
+###TODO change sheet to sheet 1 in function for FSH and FSH_MD for 2020 datasheets. Templates have been adjusted to makde them sheet 2 for future years.
 
 ### Discharge
-DSC_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DSC", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+DSC_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DSC", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
 DSC_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DSC", DSC_filenames)
-DSC_fulldataset <- do.call("rbind",lapply(DSC_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE, na.strings = ".")}))
+DSC_fulldataset <- do.call("rbind",lapply(DSC_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 2, na = c(".",""))}))
 DSC_dataset <- DSC_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day)) 
-DSC_dataset$Reach_Name <- stringr::str_replace(DSC_dataset$Reach_Name, "kasky[:blank:]|Kasky[:blank:]","kasky")
+DSC_dataset$Reach_Name <- stringr::str_replace(DSC_dataset$Reach_Name, "kasky[:blank:]|Kasky[:blank:]","kasky") %>% 
+  stringr::str_replace(DSC_dataset$Reach_Name, "copper[:blank:]|Copper[:blank:]","copper")
+
 write.csv(DSC_dataset, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/DSC_",sampling_year,".csv"), na= "", row.names = F)
 
 
+FSH_fulldataset_xl <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 1, col_types =
+                                                                                                     c("text", "text", "text",
+                                                                                                       "date", "date",
+                                                                                                       "text", "text", "text",
+                                                                                                       "numeric", "numeric",
+                                                                                                       "text","text", 
+                                                                                                       "text", "text", "text", "text", "text", "text",
+                                                                                                       "text", "text"
+                                                                                                     ),
+                                                                                                   na = c(".",""))}))
+
 ### Illinois Habitat Index
  
-IHI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+IHI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
 IHI_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI",IHI_filenames)
 IHI_fulldataset <- do.call("rbind",lapply(IHI_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE, na.strings = ".")}))
 IHI_dataset <- IHI_fulldataset %>% select(-c(Ecoregion,Gradient))
@@ -25,7 +58,7 @@ write.csv(IHI_dataset, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_
   
 ## Invertebrate Field Collection
   
-INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/INV", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/INV", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
   INV_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/INV",INV_filenames)
   INV_fulldataset <- do.call("rbind",lapply(INV_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE, na.strings = ".")}))
   INV_dataset <- INV_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
@@ -36,7 +69,7 @@ INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CRE
 
 ## Qualitative Habitat Evaluation Index
   
-  QHEI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/QHEI", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+  QHEI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/QHEI", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
   QHEI_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/QHEI",QHEI_filenames)
   QHEI_fulldataset <- do.call("rbind",lapply(QHEI_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE, na.strings = ".")}))
   QHEI_dataset <- QHEI_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
@@ -46,7 +79,7 @@ INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CRE
   
   
 ### Stream Water Chemistry
-  SWC_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/SWC", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+  SWC_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/SWC", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
   SWC_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/SWC",SWC_filenames)
   SWC_fulldataset <- do.call("rbind",lapply(SWC_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE, na.strings='.')}))
   SWC_dataset <- SWC_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
@@ -55,11 +88,11 @@ INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CRE
   write.csv(SWC_dataset, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/SWC_",sampling_year,".csv"), na= "", row.names = F)
   ### Template used in 2019 contained error in collumn title "DO_Saturation" is written as "DO%Saturation" which is incompatible with the CREP_Database in Access.
   ### After writing .csv you must change header before ingesting to DB. 
-  ### Template error fixed 1/9/2020 for future data entry. 
+  ### Template error fixed 1/9/2020 for future data entry.
   
   
 ### Fish Metadata 
-  FMD_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FMD", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+  FMD_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FMD", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
   FMD_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FMD",FMD_filenames)
   FMD_fulldataset <- do.call("rbind",lapply(FMD_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE, na.strings = ".")}))
   FMD_dataset <- FMD_fulldataset %>% select(-c(Gap_Code,Event_Year,Event_Month,Event_Day,Data_Entered_By,Data_Entered_Date))
@@ -67,21 +100,49 @@ INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CRE
   
 ### Fish Abundance 
   
-  FSH_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FSH", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+  FSH_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/ Data_IN/FSH", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
   FSH_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FSH",FSH_filenames)
   FSH_fulldataset <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
   FSH_dataset <- FSH_fulldataset %>% 
     select(-c(Gap_Code,Fish_Species_Common,Fish_Species_Scientific,Event_Day,Event_Year,Event_Month)) %>% 
     drop_na()
   write.csv(FSH_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_2018.csv")
+
+#### Fish Abundance EXcel
+  sampling_year <- 2020
+  FSH_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FSH", pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
+  FSH_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FSH",FSH_filenames)
+  FSH_fulldataset_xl <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 1, col_types =
+                                                                                                       c("text", "text", "text",
+                                                                                                         "date", "date",
+                                                                                                         "text", "text", "text",
+                                                                                                         "numeric", "numeric",
+                                                                                                         "text","text", 
+                                                                                                         "text", "text", "text", "text", "text", "text",
+                                                                                                         "text", "text"
+                                                                                                        ),
+                                                                                                     na = c(".",""))}))
   
+  FSH_fulldataset_xl <- FSH_fulldataset_xl %>% drop_na(Species_Code)
+  FSH_incomplete <- FSH_fulldataset_xl %>% 
+    filter(is.na(Event_Date)) %>%
+    select(PU_Gap_Code, Reach_Name) %>% 
+    unique()
+    
+  # FSH_fulldataset_xl$Event_Date <- as.Date(IHI_fulldataset_xl$Event_Date, origin = "1899-12-30")
+  
+  FSH_fulldataset_xl <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 1)}))
+  
+####
+  
+    
 ### Fish Length Weight
   
-  FLW_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FLW", pattern=paste0(sampling_year,"(.*)\\.csv$"))
-  FLW_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FLW",FLW_filenames)
-  FLW_fulldataset <- do.call("rbind",lapply(FLW_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
-  FLW_dataset <- FLW_fulldataset %>% select(-c(Gap_Code,Event_Year,Event_Month,Event_Day,Fish_Species_Common,Fish_Species_Scientific))
-  write.csv(FLW_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_LW_2018.csv")
+  # FLW_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FLW", pattern=paste0(sampling_year,"(.*)\\.csv$"))
+  # FLW_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FLW",FLW_filenames)
+  # FLW_fulldataset <- do.call("rbind",lapply(FLW_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+  # FLW_dataset <- FLW_fulldataset %>% select(-c(Gap_Code,Event_Year,Event_Month,Event_Day,Fish_Species_Common,Fish_Species_Scientific))
+  # write.csv(FLW_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_LW_2018.csv")
   
   
   #head(DSC_fulldataset) 
