@@ -1,15 +1,17 @@
 library(tidyverse)
 
-IBI <- read.csv("SitesIBIRegionsTable.csv", header = TRUE, stringsAsFactors = FALSE) %>%
-  select(-c(Event_Date))
+# # I believe the bloe file is an old file from Brian that has some of the IBI Regions Incirrect for the various 
+# IBI <- read.csv("Fish_IBI/SitesIBIRegionsTable.csv", header = TRUE, stringsAsFactors = FALSE) %>%
+#   select(-c(Event_Date))
+# 
+# IHI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI", pattern="_2019.csv")
+# IHI_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI",IHI_filenames)
+# IHI_fulldataset <- do.call("rbind",lapply(IHI_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+# write.csv(IHI_fulldataset, file= "IHI_2018_full.csv")
+# 
+# IHI <- read.csv("IHI_2018_full.csv", header = TRUE, stringsAsFactors = FALSE)
 
-IHI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI", pattern="_2019.csv")
-IHI_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI",IHI_filenames)
-IHI_fulldataset <- do.call("rbind",lapply(IHI_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
-write.csv(IHI_fulldataset, file= "IHI_2018_full.csv")
-
-IHI <- read.csv("IHI_2018_full.csv", header = TRUE, stringsAsFactors = FALSE)
-
+# #Bring in the IHI data this will give you the EcoRegion that is needed for the IBI. 
 
 IHI_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI", pattern="*.xlsx")
 IHI_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IHI",IHI_filenames)
@@ -22,15 +24,19 @@ IHI_fulldataset_xl <- do.call("rbind",lapply(IHI_fullpath, FUN = function(files)
 
 IHI_fulldataset_xl$Event_Date <- as.Date(IHI_fulldataset_xl$Event_Date, origin = "1899-12-30")
 
+# Read in IBI Regions table
+# TODO What is the source of this file? ARCGIS Random data from you or Brian? It looks like it is from Arc
 IBI <- read_csv(file = "Fish_IBI/KaskyCatchments_IBIRegion.csv")
+# Read in 
 IHI <- read_csv(file = "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_OUT/DB_Ingested/IHI_2019.csv")
 
-IBI_2019<- readxl::read_xlsx("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IBI/IBI_Metadata_2019.xlsx")
-IBI_2019 <- IBI_2019 %>% 
-  select(c(PU_Gap_Code, Reach_Name, Event_Date, IBIREGION_, `Slope Adjusted`))
-IBI_2019 <- rename(IBI_2019, Slope_Adjusted = `Slope Adjusted`)
-IBI_2019 <- rename(IBI_2019, IBI_Region = IBIREGION_)
-IBI_2019$Event_Date <- as.Date(IBI_2019$Event_Date)
+# #IDK why this is here? Remove it please
+# IBI_2019<- readxl::read_xlsx("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IBI/IBI_Metadata_2019.xlsx")
+# IBI_2019 <- IBI_2019 %>% 
+#   select(c(PU_Gap_Code, Reach_Name, Event_Date, IBIREGION_, `Slope Adjusted`))
+# IBI_2019 <- rename(IBI_2019, Slope_Adjusted = `Slope Adjusted`)
+# IBI_2019 <- rename(IBI_2019, IBI_Region = IBIREGION_)
+# IBI_2019$Event_Date <- as.Date(IBI_2019$Event_Date)
 
 
 names(IBI)
@@ -72,3 +78,6 @@ FSH_dataset <- FSH_fulldataset %>%
   select(-c(Gap_Code,Event_Day,Event_Year,Event_Month)) %>% 
   drop_na()
 write.csv(FSH_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/IBI/FSH_2018_FullCopy.csv")
+
+
+### Fish from single line list then 
