@@ -4,22 +4,32 @@
 ####
 library(tidyverse)
 sampling_year <- 2020
-data_type <- "DSC"
-# collumns <- c("text", "text", "text","date", "date", "text", "text", "text", "numeric", "numeric",
-#               "text","text", "text", "text", "text", "text", "text", "text", "text", "text")
-collumns<- c("text", "text","date", "date","numeric","numeric","numeric","numeric","numeric","numeric")
+# data_type <- "DSC"
+# collumns<- c("text", "text","date", "date","numeric","numeric","numeric","numeric","numeric","numeric")
+
+data_type <- "FSH"
+collumns <- c("text", "text", "text","date", "date", "text", "text", "text", "numeric", "numeric",
+              "text","text", "text", "text", "text", "text", "text", "text", "text", "text")
+
+data_type <- "IHI"
+collumns <- c("text","text","date","skip","skip","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric",
+              "text","text","text","text","text","text",
+              "numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric")
+
 # filter <- 
 
 ### Generic
 data_filenames <- list.files(path= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type), pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
 data_fullpath = file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type, data_filenames)
 data_fulldataset <- do.call("rbind",lapply(data_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 2, na = c(".",""), col_types = collumns)}))
+view(data_fulldataset)
 
-data_dataset <- data_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
-data_dataset$Reach_Name <- stringr::str_replace(data_dataset$Reach_Name, "kasky[:blank:]|Kasky[:blank:]","kasky") %>% 
-  stringr::str_replace(data_dataset$Reach_Name, "copper[:blank:]|copper|Copper","Copper ")
+# data_dataset <- data_fulldataset %>% select(-c(Event_Year,Event_Month, Event_Day))
 
-write.csv(data_dataset, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/","TEST_",data_type, "_", sampling_year,".csv"), na= "", row.names = F)
+data_fulldataset$Reach_Name <- stringr::str_replace(data_fulldataset$Reach_Name, "copper[:blank:]|copper|Copper|copper[:digit:]","Copper ") %>% 
+  stringr::str_replace(data_fulldataset$Reach_Name, "kasky[:blank:]|Kasky[:blank:]","kasky")
+
+write.csv(data_fulldataset, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/",data_type, "_", sampling_year,".csv"), na= "", row.names = F)
 
 
 ###TODO change sheet to sheet 1 in function for FSH and FSH_MD for 2020 datasheets. Templates have been adjusted to makde them sheet 2 for future years.
@@ -123,15 +133,49 @@ INV_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia_CRE
                                                                                                         ),
                                                                                                      na = c(".",""))}))
   
-  FSH_fulldataset_xl <- FSH_fulldataset_xl %>% drop_na(Species_Code)
-  FSH_incomplete <- FSH_fulldataset_xl %>% 
-    filter(is.na(Event_Date)) %>%
-    select(PU_Gap_Code, Reach_Name) %>% 
-    unique()
+  FSH_fulldataset_xl <- FSH_fulldataset_xl %>% 
+    drop_na(Species_Code) %>% 
+    mutate(across(where(is.character), ~na_if(., "no"))) %>% 
+    mutate(Release_status = replace_na(Release_status, "alive"))
     
-  # FSH_fulldataset_xl$Event_Date <- as.Date(IHI_fulldataset_xl$Event_Date, origin = "1899-12-30")
+  write.csv(FSH_fulldataset_xl, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_", sampling_year,".csv"), na= "", row.names = F)
   
-  FSH_fulldataset_xl <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 1)}))
+  
+  df <- starwars %>%
+    mutate(across(where(is.character), ~na_if(., "unknown")))
+  
+#   FSH_incomplete <- FSH_fulldataset_xl %>% 
+#     filter(is.na(Event_Date)) %>%
+#     select(PU_Gap_Code, Reach_Name) %>% 
+#     unique()
+#   
+# fsh_kasky157test_d <- readxl::read_xlsx("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FSH/FSH_kasky157test_20200821.xlsx", 
+#                                   sheet = 1, 
+#                                   col_types = c("text", "text", "text",
+#                                       "date", "date",
+#                                       "text", "text", "text",
+#                                       "numeric", "numeric",
+#                                       "text","text", 
+#                                       "text", "text", "text", "text", "text", "text",
+#                                       "text", "text"),
+#                                   na = c(".",""))
+# 
+# fsh_kasky1508_d <- readxl::read_xlsx("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FSH/FSH_Kasky1508_20200922.xlsx", 
+#                                   sheet = 1, 
+#                                   col_types = c("text", "text", "text",
+#                                                 "date", "date",
+#                                                 "text", "text", "text",
+#                                                 "numeric", "numeric",
+#                                                 "text","text", 
+#                                                 "text", "text", "text", "text", "text", "text",
+#                                                 "text", "text"),
+#                                   na = c(".",""))
+
+
+# FSH_fulldataset_xl$Event_Date <- as.Date(FSH_fulldataset_xl$Event_Date, origin = "1899-12-30")
+# FSH_fulldataset_xl$Fish_Date <- as.Date(FSH_fulldataset_xl$Event_Date, origin = "1899-12-30")
+  
+# FSH_fulldataset_xl <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 1)}))
   
 ####
   
