@@ -58,7 +58,7 @@ view(IHI_fulldataset)
 
 #### Compare IHI and IBI Region Table ####
 names(IBI)
-names(IHI)
+# names(IHI)
 names(IHI_fulldataset)
 
 IBI <- rename(IBI, PU_Gap_Code = PUGAP_CODE)
@@ -71,7 +71,7 @@ IBI_MD <- left_join(IHI_fulldataset, IBI)
    
 IBI_MD$Slope <- IBI_MD$Gradient*100
 
-IBI_MD_2020 <- IBI_MD %>% 
+IBI_MD <- IBI_MD %>% 
   # filter(lubridate::year(Event_Date) > 2018) %>% 
   select(c(PU_Gap_Code, Reach_Name, Event_Date, IBI_Region, Slope)) %>% 
   rename(Slope_Adjusted = Slope) %>% 
@@ -92,15 +92,51 @@ IBI_MD_2020 <- IBI_MD %>%
 # 
 # head(IBI_MD)
 
-write.csv(IBI_MD_2020, file= "IBI_MetaData_2020.csv")
+write.csv(IBI_MD, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IBI/IBI_Metadata_",sampling_year,".csv"), row.names = F)
 
-FSH_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FSH", pattern="*.csv")
-FSH_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FSH",FSH_filenames)
-FSH_fulldataset <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
-FSH_dataset <- FSH_fulldataset %>% 
-  select(-c(Gap_Code,Event_Day,Event_Year,Event_Month)) %>% 
-  drop_na()
-write.csv(FSH_dataset, file= "//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/IBI/FSH_2018_FullCopy.csv")
+#### Read in Fish Data ####
+data_type <- "FSH"
+collumns <- c("text", "text", "text","date", "date", "text", "text", "text", "numeric", "numeric",
+              "text","text", "text", "text", "text", "text", "text", "text", "text", "text")
+
+data_filenames <- list.files(path= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type), pattern=paste0(sampling_year,"(.*)\\.xlsx$"))
+data_fullpath = file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type, data_filenames)
+data_fulldataset <- do.call("rbind",lapply(data_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 1, na = c(".",""), col_types = collumns)}))
+
+view(data_fulldataset)
+
+#### Fish from single line list then collapse into single line for each species type with count per site####
+
+fish_summary <- data_fulldataset %>% 
+  drop_na(Species_Code) %>% 
+  mutate(across(where(is.character), ~na_if(., "no"))) %>% 
+  mutate(Release_status = replace_na(Release_status, "alive"))%>%
+  group_by(PU_Gap_Code, Reach_Name, Event_Date, Species_Code, Fish_Species_Common) %>% 
+  summarise(Fish_Species_Count = n())
+
+fish_summary$Reach_Name <- stringr::str_replace(fish_summary$Reach_Name, "copper[:blank:]|copper|Copper|copper[:digit:]","Copper ") %>% 
+  stringr::str_replace(fish_summary$Reach_Name, "kasky[:blank:]|Kasky[:blank:]","kasky")
+
+fish_summary$PU_Gap_Code <- stringr::str_to_lower(fish_summary$PU_Gap_Code)
+  
+view(fish_summary)
+
+# test_fish <- fish_summary %>% 
+#   group_by(PU_Gap_Code, Reach_Name) %>% 
+#   summarise(fish_count = sum(Fish_Species_Count))
+
+# FSH_filenames <- list.files(path="//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FSH", pattern="*.csv")
+# FSH_fullpath=file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia CREP/Data/Data_IN/FSH",FSH_filenames)
+# FSH_fulldataset <- do.call("rbind",lapply(FSH_fullpath, FUN = function(files){read.csv(files, stringsAsFactors = FALSE)}))
+# FSH_dataset <- FSH_fulldataset %>% 
+#   select(-c(Gap_Code,Event_Day,Event_Year,Event_Month)) %>% 
+#   drop_na()
 
 
-### Fish from single line list then 
+write.csv(fish_summary, file= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/IBI/FSH_",sampling_year,"_summary.csv"), row.names = F)
+
+
+
+
+
+
