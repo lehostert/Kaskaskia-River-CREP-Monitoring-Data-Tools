@@ -4,28 +4,26 @@
 ####
 library(tidyverse)
 library(docstring)
-sampling_year <- 2020
 
-data_in_path <- "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/"
+#### Function for binding data ####
 
-
-bind_data <- function(sampling_year, data_type, collumns) {
+bind_data <- function(dat_type, col_type, sampling_year) {
   #' Create dataframe by binding together all of the excel templates for a certain data types and prepare for ingest to DB
   #'
-  #' @param sampling_year numeric "YYYY" reprsentation of the sampling year of interest.
-  #' @param data_type 3 letter code used in template files for the data type you want to combine.
-  #' @param collumns concatenated list of collumn tpyes for the read_xl function, specific to each data type.
+  #' @param dat_type 3 letter code used in template files for the data type you want to combine.
+  #' @param col_type list of column types for the read_xl function, specific to each data type.
+  #' @param sampling_year numeric "YYYY" representation of the sampling year of interest.
   #'
   data_in_path <- "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/"
   data_filenames <- list.files(
-    path = paste0(data_in_path, data_type),
+    path = file.path(data_in_path, dat_type),
     pattern = paste0(sampling_year, "(.*)\\.xlsx$")
   )
-  data_fullpath <- file.path(data_in_path, data_type, data_filenames)
+  data_fullpath <- file.path(data_in_path, dat_type, data_filenames)
   data_fulldataset <- do.call("rbind", lapply(data_fullpath, FUN = function(files) {
-    readxl::read_xlsx(files, sheet = 2, na = c(".", ""), col_types = collumns)
+    readxl::read_xlsx(files, sheet = 2, na = c(".", ""), col_types = col_type)
   }))
-  write.csv(data_fulldataset, file = paste0(data_in_path, "DB_Ingest/", data_type, sampling_year, ".csv"), na = "", row.names = F)
+  write.csv(data_fulldataset, file = paste0(data_in_path, "DB_Ingest/", dat_type,"_", sampling_year, ".csv"), na = "", row.names = F)
 }
 
 ## TODO fix the above function so it is working again with the below code then make year generic and separately try to again make the DATA_IN path generic. 
@@ -51,6 +49,21 @@ ihi_funct2 <- bind_data(2020, "IHI", c(
 dsc_funct <- bind_data(2020, "DSC", c("text", "text", "date", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"))
 
 view(dsc_funct)
+
+### Generic
+
+data_type <- "IHI"
+collumns <- c("text","text","date","skip","skip","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric",
+              "text","text","text","text","text","text",
+              "numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric")
+
+
+data_filenames <- list.files(path= paste0("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type), pattern=paste0(sampling_year,"(.*)\\.xlsx$"))	
+data_fullpath = file.path("//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/", data_type, data_filenames)	
+data_fulldataset <- do.call("rbind",lapply(data_fullpath, FUN = function(files){readxl::read_xlsx(files, sheet = 2, na = c(".",""), col_types = collumns)}))
+view(data_fulldataset)
+
+
 
 
 ### Generic
