@@ -1,6 +1,10 @@
 library(jsonlite)
 
 column_types <- list(
+  SWC = c("text","text","date","skip","skip","skip","date","numeric","numeric",
+          "numeric","numeric","numeric","numeric","numeric","numeric","numeric",
+          "numeric"
+          ),
   FSH = c(
     "text", "text", "text", "date", "date", "text", "text", "text", "numeric",
     "numeric", "text", "text", "text", "text", "text", "text", "text", "text",
@@ -18,6 +22,9 @@ column_types <- list(
     "numeric", "numeric", "numeric", "numeric", "numeric", "numeric",
     "numeric", "numeric", "numeric", "numeric"
     ),
+  QHEI = c("text","text","date","skip","skip","skip","numeric","numeric",
+           "numeric","numeric","numeric","numeric","numeric","numeric"
+           ),
   DSC = c(
     "text", "text", "date", "date", "numeric", "numeric", "numeric", "numeric",
     "numeric", "numeric"
@@ -26,9 +33,10 @@ column_types <- list(
     "text", "text", "date", "skip", "skip", "skip", "numeric", "text", "text",
     "text", "text"
     )
+  
   )
 
-output_filename <- "column_schemas.json"
+output_filename <- "Combine_Data_IN/column_schemas.json"
 jsonlite::write_json(column_types, output_filename, pretty = TRUE)
 
 cat("Wrote file", output_filename, "to disk\n")

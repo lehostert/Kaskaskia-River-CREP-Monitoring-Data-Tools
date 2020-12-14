@@ -9,12 +9,14 @@ library(jsonlite)
 #### Read json config file ####
 column_types_simp <- jsonlite::read_json("Combine_Data_IN/column_schemas.json", simplifyVector = TRUE)
 column_types_from <- jsonlite::fromJSON("Combine_Data_IN/column_schemas.json")
+x <- jsonlite::fromJSON("https://gist.githubusercontent.com/matthewfeickert/7d51c57dfde341e392b2521bc16cdd2d/raw/a83d46860b7fa7e838f24ba18a0b23b08c6840e6/column_schemas.json")
+y <- jsonlite::read_json("https://gist.githubusercontent.com/matthewfeickert/7d51c57dfde341e392b2521bc16cdd2d/raw/a83d46860b7fa7e838f24ba18a0b23b08c6840e6/column_schemas.json")
+
 
 ihi_columns <- column_types$IHI
 ihi_columns_2 <- column_types2$IHI
 
 print(paste("The first column data type in the FSH data type is:", fish_columns[1]))
-
 
 
 #### Function for binding data ####

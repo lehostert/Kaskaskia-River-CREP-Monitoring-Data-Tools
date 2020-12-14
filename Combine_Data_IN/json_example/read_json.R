@@ -1,6 +1,6 @@
 library(jsonlite)
 
-column_types <- jsonlite::read_json("column_schemas.json")
+column_types <- jsonlite::read_json("Combine_Data_IN/column_schemas.json")
 
 fish_columns <- column_types$FSH
 
