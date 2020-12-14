@@ -4,10 +4,22 @@
 ####
 library(tidyverse)
 library(docstring)
+library(jsonlite)
+
+#### Read json config file ####
+column_types_simp <- jsonlite::read_json("Combine_Data_IN/column_schemas.json", simplifyVector = TRUE)
+column_types_from <- jsonlite::fromJSON("Combine_Data_IN/column_schemas.json")
+
+ihi_columns <- column_types$IHI
+ihi_columns_2 <- column_types2$IHI
+
+print(paste("The first column data type in the FSH data type is:", fish_columns[1]))
+
+
 
 #### Function for binding data ####
 
-bind_data <- function(dat_type, col_type, sampling_year) {
+bind_data_fun <- function(dat_type, col_type, sampling_year) {
   #' Create dataframe by binding together all of the excel templates for a certain data types and prepare for ingest to DB
   #'
   #' @param dat_type 3 letter code used in template files for the data type you want to combine.
@@ -23,8 +35,16 @@ bind_data <- function(dat_type, col_type, sampling_year) {
   data_fulldataset <- do.call("rbind", lapply(data_fullpath, FUN = function(files) {
     readxl::read_xlsx(files, sheet = 2, na = c(".", ""), col_types = col_type)
   }))
-  write.csv(data_fulldataset, file = paste0(data_in_path, "DB_Ingest/", dat_type,"_", sampling_year, ".csv"), na = "", row.names = F)
+  # write.csv(data_fulldataset, file = paste0(data_in_path, "DB_Ingest/", dat_type,"_", sampling_year, ".csv"), na = "", row.names = F)
 }
+
+
+ihi_columns_orig <- c("text","text","date","skip","skip","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric",
+             "text","text","text","text","text","text",
+             "numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric","numeric")
+
+y <- bind_data_fun("IHI", column_types2$IHI, 2020)
+w <- bind_data_fun("IHI", column_types_simp$IHI, 2020)
 
 ## TODO fix the above function so it is working again with the below code then make year generic and separately try to again make the DATA_IN path generic. 
 ## Function worked with the below code BEFORE data_path_in was created. 
