@@ -20,11 +20,14 @@ inv$Reach_Name <- stringr::str_to_lower(inv$Reach_Name)
 ## Read in data from lab processing
 inv_online <- readxl::read_excel(path = paste0("~/CREP/External_Lab/EcoAnalysts Invert Tables/2020/macroinvertebrate_labprocessing_", year,".xlsx"))
 inv_sum <- inv_online %>% 
-  select(PUGap_Code, Site_Name, Event_Date, INV_Date, "# SubsampleVials...12") %>% 
-  rename(SubsampleVials = "# SubsampleVials...12",) 
+  select(PUGap_Code, Site_Name, Event_Date, INV_Date, "Final Vials")
   
-inv_final <- full_join(inv, inv_sum, by = c("PU_Gap_Code" = "PUGap_Code", "Event_Date" = "INV_Date", "Reach_Name" = "Site_Name")) %>% 
-  rename(INV_Date = Event_Date, Event_Date = Event_Date.y)
+inv_reform <- full_join(inv, inv_sum, by = c("PU_Gap_Code" = "PUGap_Code", "Event_Date" = "INV_Date", "Reach_Name" = "Site_Name")) %>% 
+  rename(INV_Date = Event_Date, Event_Date = Event_Date.y) %>% 
+  select(PU_Gap_Code, Reach_Name, Collection_Date = INV_Date, Collector, Habitat, Final_Vials = "Final Vials")
+
+inv_final <- uncount(inv_reform, Final_Vials, .remove = FALSE, .id = "Vial_Num")
+inv_final$Collection_Date <- lubridate::date(inv_final$Collection_Date)
 
 
-write_csv(inv, path = paste0("~/CREP/External_Lab/EcoAnalysts Invert Tables/", year,"/Invert_Sample_Labels_", year,".csv"))
+write_csv(inv_final, path = paste0("~/CREP/External_Lab/EcoAnalysts Invert Tables/", year,"/Invert_Sample_Labels_", year,".csv"))
