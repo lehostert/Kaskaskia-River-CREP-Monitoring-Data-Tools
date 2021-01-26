@@ -1,4 +1,5 @@
 library(tidyverse)
+library(writexl)
 network_prefix <- "//INHS-Bison" #Lauren's Desktop PC
 
 sampling_year <- 2020
@@ -47,4 +48,8 @@ location_summary$Reach_Name <- stringr::str_remove(location_summary$Reach_Name, 
 ### Join Fish and Location Data
 permit_summary <- right_join(location_summary, fish_summary, by = c("PU_Gap_Code", "Reach_Name", "Event_Date")) %>% 
   select(-c(Reach_Name))
+
+### Write it to a file
+
+writexl::write_xlsx(permit_summary, path = "~/CREP/Permits/2020/2020_Fish_Permit_Summary.xlsx")
 
