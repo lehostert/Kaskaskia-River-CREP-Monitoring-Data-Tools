@@ -40,3 +40,7 @@ SWC_2020 <- bind_data_fun("SWC", column_types$SWC, 2020)
 QHEI_2020 <- bind_data_fun("QHEI", column_types$QHEI, 2020)
 DSC_2020 <- bind_data_fun("DSC", column_types$DSC, 2020)
 INV_2020 <- bind_data_fun("INV", column_types$INV, 2020)
+
+# TODO Change Template so that fish data is on second sheet. 
+# To run the below command change sheet = 1 in the function, reload function, then run 
+FSH_2020 <- bind_data_fun("FSH", column_types$FSH, 2020)
