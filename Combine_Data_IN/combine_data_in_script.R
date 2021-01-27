@@ -17,7 +17,7 @@ column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/
 bind_data_fun <- function(dat_type, col_type, sampling_year) {
   #' Create dataframe by binding together all of the excel templates for a certain data types and prepare for ingest to DB
   #'
-  #' @param dat_type 3 letter code used in template files for the data type you want to combine.
+  #' @param dat_type 3-4 letter code used in template files for the data type you want to combine.
   #' @param col_type list of column types for the read_xl function, specific to each data type.
   #' @param sampling_year numeric "YYYY" representation of the sampling year of interest.
   #'
@@ -30,8 +30,8 @@ bind_data_fun <- function(dat_type, col_type, sampling_year) {
   data_fulldataset <- do.call("rbind", lapply(data_fullpath, FUN = function(files) {
     readxl::read_xlsx(files, sheet = 2, na = c(".", ""), col_types = col_type)
   }))
-  return(data_fulldataset)
   write.csv(data_fulldataset, file = paste0(data_in_path, "DB_Ingest/", dat_type,"_", sampling_year, ".csv"), na = "", row.names = F)
+  return(data_fulldataset)
 } 
 
 
