@@ -6,7 +6,7 @@ sampling_year <- 2020
 
 #### Read in fish data and turn into abundance data ####
 
-fish <- read.csv(file = paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_",sampling_year,".csv"), header = T)
+fish <- read.csv(file = paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_",sampling_year,".csv"), header = T, na.strings = "")
 fish$Event_Date <- as.Date(fish$Event_Date)
 
 
@@ -28,6 +28,7 @@ fish_summary$Reach_Name <- stringr::str_remove(fish_summary$Reach_Name, "[:blank
 
 fish_summary$Release_status <- str_replace(fish_summary$Release_status, "mortality", "Destroyed")
 fish_summary$Release_status <- str_replace(fish_summary$Release_status, "alive", "Released")
+fish_summary$Release_status <- str_replace(fish_summary$Release_status, "voucher", "Donated to INHS")
 fish_summary$Release_status <- str_replace(fish_summary$Release_status, "Voucher", "Donated to INHS")
 
 
@@ -51,5 +52,5 @@ permit_summary <- right_join(location_summary, fish_summary, by = c("PU_Gap_Code
 
 ### Write it to a file
 
-writexl::write_xlsx(permit_summary, path = "~/CREP/Permits/2020/2020_Fish_Permit_Summary.xlsx")
+writexl::write_xlsx(permit_summary, path = paste0("~/CREP/Permits/",sampling_year,"/",sampling_year,"_Fish_Permit_Summary.xlsx"))
 
