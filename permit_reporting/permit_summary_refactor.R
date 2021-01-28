@@ -1,6 +1,8 @@
 library(tidyverse)
 library(writexl)
-network_prefix <- "//INHS-Bison" #Lauren's Desktop PC
+
+network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison", "/Volumes")
+# network_prefix <- "//INHS-Bison" #Lauren's Desktop PC
 
 sampling_year <- 2020
 
