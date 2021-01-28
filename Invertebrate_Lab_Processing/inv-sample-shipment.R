@@ -1,6 +1,7 @@
 library(tidyverse)
 
-network_prefix <- "//INHS-Bison" #Lauren's Desktop PC
+network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison", "/Volumes")
+
 year <- "2020"
 
 ### Read in data going into DB
@@ -21,6 +22,9 @@ inv$Reach_Name <- stringr::str_to_lower(inv$Reach_Name)
 inv_online <- readxl::read_excel(path = paste0("~/CREP/External_Lab/EcoAnalysts Invert Tables/2020/macroinvertebrate_labprocessing_", year,".xlsx"))
 inv_sum <- inv_online %>% 
   select(PUGap_Code, Site_Name, Event_Date, INV_Date, "Final Vials")
+
+## It seems like the Event_Date, Inv_Date, Collection_Date is going to become an issues later on please clearify the code below in order to work better
+## for future users. 
   
 inv_reform <- full_join(inv, inv_sum, by = c("PU_Gap_Code" = "PUGap_Code", "Event_Date" = "INV_Date", "Reach_Name" = "Site_Name")) %>% 
   rename(INV_Date = Event_Date, Event_Date = Event_Date.y) %>% 
