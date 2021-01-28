@@ -2,6 +2,7 @@ library(tidyverse)
 library(odbc)
 library(DBI)
 
+network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison", "/Volumes")
 
 # dbWriteTable()
 
@@ -37,7 +38,8 @@ dbWriteTable(con, "Invert_Metadata_Field", invert_field_table, batch_rows = 1, o
 
 dbDisconnect(con)
 
-
+## Keep this for when you are creating a script to ingest all of the data into the DB then auto move them to the OUT folder
+## file.rename(paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/test.csv"), paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP/Data/Data_OUT/DB_Ingested/test.csv"))
 
 
 #####################################################
