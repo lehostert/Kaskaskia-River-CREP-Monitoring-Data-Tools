@@ -12,28 +12,29 @@ con <- dbConnect(odbc::odbc(), "Testing_Database")
 # con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
 dbListTables(con) # To get the list of tables in the database
 
-dbWriteTable(con, "Habitat_IHI", IHI_2020, append = TRUE)
-# dbWriteTable(con, "Habitat_IHI", IHI_2020, batch_rows = 1, append = TRUE)
+dbWriteTable(con, "Water_Chemistry_Field", SWC_2020, batch_rows = 1, append = TRUE)
 
 ##TODO test this
-dbAppendTable(conn = con, name = "Habitat_IHI", value = IHI_2020, row.names = FALSE)
+dbAppendTable(conn = con, name = "Habitat_Discharge", value = DSC_2020,  batch_rows = 1)
+dbWriteTable(con, "Habitat_Discharge", DSC_2020, batch_rows = 1, append = TRUE)
+
 
 ## This is based on GitHub Comments for issues #263 of the odbc package. but you should continue reading to see
 ## if dbAppendTable is a "safer" option for what you want to do because there is no way to set append to be FALSE with dbAppendTable but there is for 
 ## See https://github.com/r-dbi/odbc/issues/263 for more information 
 
-ihi_table <- as_tibble(tbl(con, "Habitat_IHI"))
-
-### Example for updating and replacing all of the records in a table
-
-invert_field_table <- as_tibble(tbl(con, "Invert_Metadata_Field"))
-inv_col_unique <- unique(invert_field_table$Jab_Collector)
-
-invert_field_table$Jab_Collector <- stringr::str_remove(invert_field_table$Jab_Collector, "[:punct:]")
-invert_field_table$Jab_Collector <- stringr::str_to_lower(invert_field_table$Jab_Collector)
-inv_col_unique2 <- unique(invert_field_table$Jab_Collector)
-
-dbWriteTable(con, "Invert_Metadata_Field", invert_field_table, batch_rows = 1, overwrite = TRUE, append = FALSE)
+# ihi_table <- as_tibble(tbl(con, "Habitat_IHI"))
+# 
+# ### Example for updating and replacing all of the records in a table
+# 
+# invert_field_table <- as_tibble(tbl(con, "Invert_Metadata_Field"))
+# inv_col_unique <- unique(invert_field_table$Jab_Collector)
+# 
+# invert_field_table$Jab_Collector <- stringr::str_remove(invert_field_table$Jab_Collector, "[:punct:]")
+# invert_field_table$Jab_Collector <- stringr::str_to_lower(invert_field_table$Jab_Collector)
+# inv_col_unique2 <- unique(invert_field_table$Jab_Collector)
+# 
+# dbWriteTable(con, "Invert_Metadata_Field", invert_field_table, batch_rows = 1, overwrite = TRUE, append = FALSE)
 
 #Test with inspecting "BLukaszczyk" and "David S."
 
