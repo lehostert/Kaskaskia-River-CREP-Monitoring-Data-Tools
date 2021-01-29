@@ -10,7 +10,9 @@ library(jsonlite)
 # column_types <- jsonlite::fromJSON("Combine_Data_IN/column_schemas.json")
 
 # TODO Once json file is on GitHub main branch change link 
-column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/master/Combine_Data_IN/column_schemas.json")
+column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/db-ingest/Combine_Data_IN/column_schemas.json")
+
+# column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/master/Combine_Data_IN/column_schemas.json")
 
 #### Function for binding data ####
 
