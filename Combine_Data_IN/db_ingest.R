@@ -9,8 +9,8 @@ network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//I
 
 ### with odbc
 odbcListDrivers() # to get a list of the drivers your computer knows about 
-con <- dbConnect(odbc::odbc(), "Testing_Database")
-# con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
+# con <- dbConnect(odbc::odbc(), "Testing_Database")
+con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
 dbListTables(con) # To get the list of tables in the database
 
 
@@ -21,24 +21,11 @@ dbAppendTable(conn = con, name = "Habitat_QHEI", value = QHEI_2020, batch_rows =
 dbAppendTable(conn = con, name = "Invert_Metadata_Field", value = INV_2020, batch_rows = 1)
 dbAppendTable(conn = con, name = "Water_Chemistry_Field", value = SWC_2020, batch_rows = 1)
 
+
 ## This is based on GitHub Comments for issues #263 of the odbc package. but you should continue reading to see
 ## if dbAppendTable is a "safer" option for what you want to do because there is no way to set append to be FALSE with dbAppendTable but there is for 
 ## See https://github.com/r-dbi/odbc/issues/263 for more information 
 
-# ihi_table <- as_tibble(tbl(con, "Habitat_IHI"))
-# 
-# ### Example for updating and replacing all of the records in a table
-# 
-# invert_field_table <- as_tibble(tbl(con, "Invert_Metadata_Field"))
-# inv_col_unique <- unique(invert_field_table$Jab_Collector)
-# 
-# invert_field_table$Jab_Collector <- stringr::str_remove(invert_field_table$Jab_Collector, "[:punct:]")
-# invert_field_table$Jab_Collector <- stringr::str_to_lower(invert_field_table$Jab_Collector)
-# inv_col_unique2 <- unique(invert_field_table$Jab_Collector)
-# 
-# dbWriteTable(con, "Invert_Metadata_Field", invert_field_table, batch_rows = 1, overwrite = TRUE, append = FALSE)
-
-#Test with inspecting "BLukaszczyk" and "David S."
 
 dbDisconnect(con)
 
@@ -61,4 +48,6 @@ move_in_to_out("QHEI", 2020)
 move_in_to_out("INV", 2020)
 move_in_to_out("SWC", 2020)
 
+
 # TODO make the ingest portion of this code more generic. Remove years from object names for "value" and to ingest data from .csv  and not from objects saved in R
+# TODO fix the fact that you need to FMD <- FMD %>% select(-c(Data_Entered_By, Data_Entered_Date)) in order to ingest Fish Metadata
