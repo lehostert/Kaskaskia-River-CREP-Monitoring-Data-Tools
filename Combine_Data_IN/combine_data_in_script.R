@@ -10,7 +10,7 @@ library(jsonlite)
 # column_types <- jsonlite::fromJSON("Combine_Data_IN/column_schemas.json")
 
 # TODO Once json file is on GitHub main branch change link 
-column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/read-from-excel/Combine_Data_IN/column_schemas.json")
+column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/master/Combine_Data_IN/column_schemas.json")
 
 #### Function for binding data ####
 
@@ -64,3 +64,4 @@ bind_data_fun <- function(dat_type, col_type, sampling_year) {
 } 
 
 FSH_2020 <- bind_data_fun("FSH", column_types$FSH, 2020)
+FMD <- bind_data_fun("FMD", column_types$FMD, 2020)

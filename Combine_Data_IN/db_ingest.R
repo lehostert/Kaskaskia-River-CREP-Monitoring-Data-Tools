@@ -8,11 +8,12 @@ network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//I
 
 ### with odbc
 odbcListDrivers() # to get a list of the drivers your computer knows about 
-# con <- dbConnect(odbc::odbc(), "Testing_Database")
-con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
+con <- dbConnect(odbc::odbc(), "Testing_Database")
+# con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
 dbListTables(con) # To get the list of tables in the database
 
-dbWriteTable(con, "Habitat_IHI", IHI_2020, batch_rows = 1, append = TRUE)
+dbWriteTable(con, "Habitat_IHI", IHI_2020, append = TRUE)
+# dbWriteTable(con, "Habitat_IHI", IHI_2020, batch_rows = 1, append = TRUE)
 
 ##TODO test this
 dbAppendTable(conn = con, name = "Habitat_IHI", value = IHI_2020, row.names = FALSE)
