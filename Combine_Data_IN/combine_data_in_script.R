@@ -10,7 +10,7 @@ library(jsonlite)
 # column_types <- jsonlite::fromJSON("Combine_Data_IN/column_schemas.json")
 
 # TODO Once json file is on GitHub main branch change link 
-column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/db-ingest/Combine_Data_IN/column_schemas.json")
+column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/fmd-update/Combine_Data_IN/column_schemas.json")
 
 # column_types <- jsonlite::fromJSON("https://raw.githubusercontent.com/lehostert/Kaskaskia-River-CREP-Monitoring-Data-Tools/master/Combine_Data_IN/column_schemas.json")
 
@@ -32,6 +32,10 @@ bind_data_fun <- function(dat_type, col_type, sampling_year) {
   data_fulldataset <- do.call("rbind", lapply(data_fullpath, FUN = function(files) {
     readxl::read_xlsx(files, sheet = 2, na = c(".", ""), col_types = col_type)
   }))
+  if (dat_type == "FMD") {
+    data_fulldataset <- data_fulldataset %>% 
+      mutate(Time_Effort = format(Time_Effort,"%H:%M:%S"))
+  }
   write.csv(data_fulldataset, file = paste0(data_in_path, "DB_Ingest/", dat_type,"_", sampling_year, ".csv"), na = "", row.names = F)
   return(data_fulldataset)
 } 
@@ -61,9 +65,13 @@ bind_data_fun <- function(dat_type, col_type, sampling_year) {
   data_fulldataset <- do.call("rbind", lapply(data_fullpath, FUN = function(files) {
     readxl::read_xlsx(files, sheet = 1, na = c(".", ""), col_types = col_type)
   }))
+  if (dat_type == "FMD") {
+    data_fulldataset <- data_fulldataset %>% 
+      mutate(Time_Effort = format(Time_Effort,"%H:%M:%S"))
+  }
   write.csv(data_fulldataset, file = paste0(data_in_path, "DB_Ingest/", dat_type,"_", sampling_year, ".csv"), na = "", row.names = F)
   return(data_fulldataset)
 } 
 
 FSH_2020 <- bind_data_fun("FSH", column_types$FSH, 2020)
-FMD <- bind_data_fun("FMD", column_types$FMD, 2020)
+FMD_2020 <- bind_data_fun("FMD", column_types$FMD, 2020)
