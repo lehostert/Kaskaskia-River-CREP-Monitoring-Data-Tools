@@ -11,15 +11,16 @@ network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//I
 odbcListDrivers() # to get a list of the drivers your computer knows about 
 # con <- dbConnect(odbc::odbc(), "Testing_Database")
 con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
+options(odbc.batch_rows = 1) # Must be defined as 1 for Access batch writing or appending to tables See .
 dbListTables(con) # To get the list of tables in the database
 
 
-dbAppendTable(conn = con, name = "Habitat_Discharge", value = DSC_2020,  batch_rows = 1)
-dbAppendTable(conn = con, name = "Fish_Metadata", value = FMD, batch_rows = 1)
-dbAppendTable(conn = con, name = "Habitat_IHI", value = IHI_2020, batch_rows = 1)
-dbAppendTable(conn = con, name = "Habitat_QHEI", value = QHEI_2020, batch_rows = 1)
-dbAppendTable(conn = con, name = "Invert_Metadata_Field", value = INV_2020, batch_rows = 1)
-dbAppendTable(conn = con, name = "Water_Chemistry_Field", value = SWC_2020, batch_rows = 1)
+dbAppendTable(conn = con, name = "Habitat_Discharge", value = DSC_2020)
+dbAppendTable(conn = con, name = "Fish_Metadata", value = FMD_2020)
+dbAppendTable(conn = con, name = "Habitat_IHI", value = IHI_2020)
+dbAppendTable(conn = con, name = "Habitat_QHEI", value = QHEI_2020)
+dbAppendTable(conn = con, name = "Invert_Metadata_Field", value = INV_2020)
+dbAppendTable(conn = con, name = "Water_Chemistry_Field", value = SWC_2020)
 
 
 ## This is based on GitHub Comments for issues #263 of the odbc package. but you should continue reading to see
