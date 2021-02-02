@@ -49,3 +49,15 @@ fmd_update <- fmd %>%
   rename(Fish_Metadata_ID = ID)
 
 # dbWriteTable(con, "Fish_Metadata", fmd_update, overwrite = TRUE, append = FALSE)
+
+
+#### Add Fish Metadata from 2019 ####
+FMD_2019 <- readxl::read_xlsx(path = "//INHS-Bison/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/FMD/Fish_Metadata_2019_LEH.xlsx", 
+                              sheet = 1, col_types = column_types$FMD) 
+FMD_19 <- FMD_2019 %>% 
+  mutate(Time_Effort = format(Time_Effort,"%H:%M:%S"), 
+         Fish_Date = Event_Date) %>% 
+  rename(FMD_Entered_By = Data_Entered_By, FMD_Entered_Date = Data_Entered_Date) %>% 
+  select(-c(Gap_Code))
+
+# dbAppendTable(conn = con, name = "Fish_Metadata", value = FMD_19, row.names = NULL)
