@@ -5,5 +5,6 @@
   "IHI": ["text", "text", "date", "skip", "skip", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "text", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
   "QHEI": ["text", "text", "date", "skip", "skip", "skip", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
   "DSC": ["text", "text", "date", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
-  "INV": ["text", "text", "date", "skip", "skip", "skip", "numeric", "text", "text", "text", "text"]
+  "INV": ["text", "text", "date", "skip", "skip", "skip", "numeric", "text", "text", "text", "text"],
+  "FSH19": ["text", "text", "text", "date", "skip", "skip", "skip", "text", "text", "text", "numeric", "numeric", "text", "text", "text", "text", "text", "text", "text", "text", "text", "text"]
 }
