@@ -31,11 +31,25 @@ tbl_sum <- full_join(length_sum, counts, by = c("PU_Gap_Code", "Reach_Name", "Ev
          count_dif = if_else(count_dif< 0, 0, count_dif),
          length_dif = if_else(length_dif< 0, 0, length_dif))
 
+tbl_sum2 <- counts %>% 
+  group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
+  summarize(Fish_Species_Count = sum(Fish_Species_Count)) %>% 
+  full_join(length_sum, by = c("PU_Gap_Code", "Reach_Name", "Event_Date", "Fish_Species_Code"), suffix = c(".COUNTS", ".LW")) %>% 
+  replace_na(list(Fish_Species_Count.LW = 0, Fish_Species_Count.COUNTS = 0)) %>% 
+  mutate(count_dif = Fish_Species_Count.COUNTS - Fish_Species_Count.LW,
+         length_dif = Fish_Species_Count.LW - Fish_Species_Count.COUNTS,
+         count_dif = if_else(count_dif< 0, 0, count_dif),
+         length_dif = if_else(length_dif< 0, 0, length_dif))
 
 ### is is piossible to use the new DF tbl_sum with a new collumn to create a new set of rows on the LW datat set that have no lw data. Given the 0 difference 
 ### count set to 1 and the other difference count will give you a multiple row. 
 
-Think about celver ways to use the infromation above to get a fill fish data set. 
+not_measured <- tbl_sum %>% 
+  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
+  uncount(count_dif)
+
+
+df_combined <- bind_rows(lengths, not_measured)
 
 
 # test <- left_join(f17, lengths, by = c("PU_Gap_Code", "Reach_Name", "Event_Date", "Fish_Species_Code"))
