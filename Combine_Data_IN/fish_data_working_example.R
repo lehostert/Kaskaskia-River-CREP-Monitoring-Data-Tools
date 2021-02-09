@@ -1,5 +1,8 @@
 ###Minumum working example
 library(tidyverse)
+library(odbc)
+library(DBI)
+library(docstring)
 
 network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison", "/Volumes")
 
@@ -41,12 +44,18 @@ f19_full <- f19 %>%
 f1920 <- bind_rows(f20_full, f19_full)
 
 #### Connect to datebase ###
-
-
+odbcListDrivers() # to get a list of the drivers your computer knows about 
+# con <- dbConnect(odbc::odbc(), "Testing_Database")
+con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
+options(odbc.batch_rows = 1) # Must be defined as 1 for Access batch writing or appending to tables See .
+dbListTables(con) # To get the list of tables in the database
 
 #### Read in length/weight table and count tables from 2013-2018 ####
-counts <- read_csv(file = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/counts.csv")
-lengths <- read_csv(file = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/lengths.csv")
+# counts <- read_csv(file = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/counts.csv")
+# lengths <- read_csv(file = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/lengths.csv")
+
+counts <- as_tibble(tbl(con, "Fish_Count"))
+lengths <- as_tibble(tbl(con, "Fish_Length_Weight"))
 
 # Convert Fish_Species_Count to one individual fish  per line
 f1318 <- uncount(counts, Fish_Species_Count)
@@ -57,7 +66,7 @@ length_sum <- lengths %>%
   summarise(Fish_Species_Count = n())
 
 # Create summary table of the counts of fish per species for each site/data combo and see how these numbers difference between the counts and length data tables.
-tbl_sum <- counts %>% 
+clw_sum <- counts %>% 
   group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
   summarize(Fish_Species_Count = sum(Fish_Species_Count)) %>% 
   full_join(length_sum, by = c("PU_Gap_Code", "Reach_Name", "Event_Date", "Fish_Species_Code"), suffix = c(".COUNTS", ".LW")) %>% 
@@ -67,8 +76,11 @@ tbl_sum <- counts %>%
          count_dif = if_else(count_dif< 0, 0, count_dif),
          length_dif = if_else(length_dif< 0, 0, length_dif))
 
-# Get a df of those fish that we counted by not measure for 2013-2018. 
-not_measured <- tbl_sum %>% 
+#### TODO Please take a look at clw_sum before continuing. It seems like there might be more species with length/weight data that were not on the count list than we thought
+### Fix this. 
+
+# Get a df of those fish that we counted by did not measure for 2013-2018. 
+not_measured <- clw_sum %>% 
   select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
   uncount(count_dif)
 
