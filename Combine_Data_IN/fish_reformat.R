@@ -37,7 +37,7 @@ f_19 <- bind_data_fun("FSH", column_types$FSH19, 2019)
 f_19$Event_Date <- as.Date(f_19$Event_Date)
 f_19$Fish_Date <- f_19$Event_Date
 
-f19_full <- f_19 %>%
+f19_full2 <- f_19 %>%
   mutate(across(where(is.character), ~na_if(., "no"))) %>% 
   mutate(Release_status = replace_na(Release_status, "alive")) %>% 
   select(-c(Gap_Code)) %>% 
