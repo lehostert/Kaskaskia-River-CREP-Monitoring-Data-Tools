@@ -79,6 +79,8 @@ clw_sum <- counts %>%
 #### TODO Please take a look at clw_sum before continuing. It seems like there might be more species with length/weight data that were not on the count list than we thought
 ### Fix this. 
 
+write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review.csv")
+
 # Get a df of those fish that we counted by did not measure for 2013-2018. 
 not_measured <- clw_sum %>% 
   select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
