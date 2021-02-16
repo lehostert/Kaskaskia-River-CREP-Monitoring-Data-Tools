@@ -1,4 +1,7 @@
-###Minumum working example
+### Purpose of this script to to combine all fish data from 2013 through 2020 into 1 DB table. 
+### As of Feb 2020 the fish length/weight table is separate from the fish count table. 
+### These data need to be cleaned and combined into 1 table. 
+
 library(tidyverse)
 library(odbc)
 library(DBI)
@@ -6,6 +9,8 @@ library(docstring)
 
 network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison", "/Volumes")
 
+### Read in Fish traits
+il_fish_traits <- read_csv(paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/Illinois_fish_traits.csv"))
 
 ### Read in 2019 and 2020 full data ####
 f20 <- readr::read_csv(file = paste0(network_prefix, "/ResearchData/Groups/Kaskaskia_CREP/Data/Data_IN/DB_Ingest/FSH_2020.csv"))
@@ -40,8 +45,10 @@ f19_full <- f19 %>%
   drop_na(Species_Code) %>% 
   mutate(Fish_Date = Event_Date)
 
-#### Combine 2019 and 2020 data into 1 dataset ####
-f1920 <- bind_rows(f20_full, f19_full)
+#### Combine 2019 and 2020 data into 1 data set ####
+f1920 <- bind_rows(f20_full, f19_full) %>% 
+  rename(Fish_Species_Code = Species_Code) %>% 
+  mutate(Fish_Species_Code = str_to_upper(Fish_Species_Code))
 
 #### Connect to datebase ###
 odbcListDrivers() # to get a list of the drivers your computer knows about 
@@ -76,25 +83,50 @@ clw_sum <- counts %>%
          count_dif = if_else(count_dif< 0, 0, count_dif),
          length_dif = if_else(length_dif< 0, 0, length_dif))
 
+
+# length_differences <- clw_sum %>% 
+#   filter(length_dif >0)
+
+differences <- clw_sum %>% 
+  ungroup() %>% 
+  summarise(differences = sum(length_dif))
+
+if_else(differences[[1]] > 0,
+        stop("
+             Review fish in weights/length data that are but not in count data!"),
+        not_measured <- clw_sum %>% 
+          select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
+          uncount(count_dif)
+        )
 #### TODO Please take a look at clw_sum before continuing. It seems like there might be more species with length/weight data that were not on the count list than we thought
 ### Fix this. 
 
-write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review.csv")
+# write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review_20210215.csv")
 
-# Get a df of those fish that we counted by did not measure for 2013-2018. 
-not_measured <- clw_sum %>% 
-  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
+## Get a df of those fish that we counted by did not measure for 2013-2018. 
+not_measured <- clw_sum %>%
+  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>%
   uncount(count_dif)
 
 # Combine the fish that were just counted with those that were counted and measured.
-clw_combined <- bind_rows(lengths, not_measured)
+combined_clw <- bind_rows(lengths, not_measured) %>% 
+  select(-c(Fish_Length_Weight_ID)) %>% 
+  mutate(Fish_Date = Event_Date)
 
 # Combine the 2013-2018 data with the 2019/2020 data
 
-combo <- bind_rows(f1920, clw_combined)
+combined_f1320 <- bind_rows(f1920, combined_clw)
 
 #### Fill in the information that is missing in the end ####
 
-fish_combined_final <- combo %>%
+il_fish_traits <- il_fish_traits %>% 
+  select(Fish_Species_Code, Fish_Species_Common, Fish_Species_Scientific)
+
+combined_fish <- combined_f1320 %>%
   mutate(across(where(is.character), ~na_if(., "no"))) %>% 
-  mutate(Release_status = replace_na(Release_status, "alive"))
+  mutate(Release_status = replace_na(Release_status, "alive")) %>% 
+  select(-c(Fish_Species_Common, Fish_Species_Scientific)) %>% 
+  left_join(il_fish_traits) %>% 
+  select(1:5,18:19,6:17)
+
+  
