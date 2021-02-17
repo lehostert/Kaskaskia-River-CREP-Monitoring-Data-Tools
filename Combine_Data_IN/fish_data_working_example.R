@@ -87,6 +87,7 @@ clw_sum <- counts %>%
 # length_differences <- clw_sum %>% 
 #   filter(length_dif >0)
 
+## Get a df of those fish that we counted by did not measure for 2013-2018.Only if there are no unresolved measured but not counted fish
 differences <- clw_sum %>% 
   ungroup() %>% 
   summarise(differences = sum(length_dif))
@@ -103,12 +104,14 @@ if_else(differences[[1]] > 0,
 
 # write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review_20210215.csv")
 
-## Get a df of those fish that we counted by did not measure for 2013-2018. 
-not_measured <- clw_sum %>%
-  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>%
-  uncount(count_dif)
+## TODO remove this small section for final version
+## Get a df of those fish that we counted by did not measure for 2013-2018.Only if there are no unresolved measured but not counted fish
+# not_measured <- clw_sum %>%
+#   select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>%
+#   uncount(count_dif)
 
-# Combine the fish that were just counted with those that were counted and measured.
+## CONTINUE
+# Combine the fish that were just counted (reformatted from above) with those that were weighted and measured (direct from DB).
 combined_clw <- bind_rows(lengths, not_measured) %>% 
   select(-c(Fish_Length_Weight_ID)) %>% 
   mutate(Fish_Date = Event_Date)
@@ -131,38 +134,9 @@ combined_fish <- combined_f1320 %>%
   left_join(il_fish_traits) %>% 
   select(18,1:5,19:20,6:17)
 
-##### TODO CLEAN ALL of this up it's a mess 
-combined_fish_schema <- paste(sapply(combined_fish,class))
-combined_fish_schema <- str_replace_all(combined_fish_schema, "character", "CHAR")
-combined_fish_schema <- str_replace_all(combined_fish_schema, "c(\"POSIXct\", \"POSIXt\")", "DATE")
-combined_fish_schema <- str_replace_all(combined_fish_schema, "numeric", "DOUBLE")
-combined_fish_schema[1] <- "INTEGER PRIMARY KEY" 
-
-combined_fish_name <- colnames(combined_fish)
-
-combined_fish_type <- as.tibble(sapply(combined_fish,class))
-combined_fish_type <- combined_fish_type %>% 
-  mutate_all(funs(str_replace(., "character", "TEXT")),
-             funs(str_replace(., "POSIXct", "DATE")))
-  
-colnames(combined_fish_schema) <- colnames(combined_fish)
-
-dbCreateTable(conn = con, "Fish_Abundance_Test2", combined_fish_type)
-dbAppendTable(conn = con, "Fish_Abundance_Test2", combined_fish)
-
-
-          
-           
-s <- sprintf("create table %s(%s, primary key(%s))", "Fish_Abundance_Test3",
-             paste(names(combined_fish), combined_fish_schema , collapse = ", "),
-             names(combined_fish)[1])
-s
-
-# create table DF(SpL, SpW, PtL, PtW, Species, keycol, primary key(keycol))
-
-dbGetQuery(con, "CREATE TABLE Fish_Abundance_Test4
+dbGetQuery(con, "CREATE TABLE Fish_Abundance
 (
-  Fish_Abundance_ID AutoIncrement CONSTRAINT FishID PRIMARY KEY,
+  Fish_Abundance_ID AutoIncrement PRIMARY KEY,
   PU_Gap_Code CHAR NOT NULL,
   Reach_Name CHAR NOT NULL,
   Event_Date DATE NOT NULL,
@@ -181,10 +155,10 @@ dbGetQuery(con, "CREATE TABLE Fish_Abundance_Test4
   Parasites CHAR (3),
   Electrofishing_Injury CHAR (3),
   Release_status CHAR (10),
-  NOTES CHAR
+  Notes CHAR
 )")
            
 
-dbAppendTable(conn = con, "Fish_Abundance_Test4", combined_fish)
+dbAppendTable(conn = con, "Fish_Abundance", combined_fish)
 
 dbDisconnect(con)
