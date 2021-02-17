@@ -52,8 +52,8 @@ f1920 <- bind_rows(f20_full, f19_full) %>%
 
 #### Connect to datebase ###
 odbcListDrivers() # to get a list of the drivers your computer knows about 
-# con <- dbConnect(odbc::odbc(), "Testing_Database")
-con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
+con <- dbConnect(odbc::odbc(), "Testing_Database")
+# con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
 options(odbc.batch_rows = 1) # Must be defined as 1 for Access batch writing or appending to tables See .
 dbListTables(con) # To get the list of tables in the database
 
@@ -123,10 +123,68 @@ il_fish_traits <- il_fish_traits %>%
   select(Fish_Species_Code, Fish_Species_Common, Fish_Species_Scientific)
 
 combined_fish <- combined_f1320 %>%
+  arrange(Event_Date, Fish_Species_Code) %>% 
   mutate(across(where(is.character), ~na_if(., "no"))) %>% 
-  mutate(Release_status = replace_na(Release_status, "alive")) %>% 
+  mutate(Release_status = replace_na(Release_status, "alive"),
+         Fish_Abundance_ID = row.names(combined_f1320)) %>% 
   select(-c(Fish_Species_Common, Fish_Species_Scientific)) %>% 
   left_join(il_fish_traits) %>% 
-  select(1:5,18:19,6:17)
+  select(18,1:5,19:20,6:17)
 
+##### TODO CLEAN ALL of this up it's a mess 
+combined_fish_schema <- paste(sapply(combined_fish,class))
+combined_fish_schema <- str_replace_all(combined_fish_schema, "character", "CHAR")
+combined_fish_schema <- str_replace_all(combined_fish_schema, "c(\"POSIXct\", \"POSIXt\")", "DATE")
+combined_fish_schema <- str_replace_all(combined_fish_schema, "numeric", "DOUBLE")
+combined_fish_schema[1] <- "INTEGER PRIMARY KEY" 
+
+combined_fish_name <- colnames(combined_fish)
+
+combined_fish_type <- as.tibble(sapply(combined_fish,class))
+combined_fish_type <- combined_fish_type %>% 
+  mutate_all(funs(str_replace(., "character", "TEXT")),
+             funs(str_replace(., "POSIXct", "DATE")))
   
+colnames(combined_fish_schema) <- colnames(combined_fish)
+
+dbCreateTable(conn = con, "Fish_Abundance_Test2", combined_fish_type)
+dbAppendTable(conn = con, "Fish_Abundance_Test2", combined_fish)
+
+
+          
+           
+s <- sprintf("create table %s(%s, primary key(%s))", "Fish_Abundance_Test3",
+             paste(names(combined_fish), combined_fish_schema , collapse = ", "),
+             names(combined_fish)[1])
+s
+
+# create table DF(SpL, SpW, PtL, PtW, Species, keycol, primary key(keycol))
+
+dbGetQuery(con, "CREATE TABLE Fish_Abundance_Test4
+(
+  Fish_Abundance_ID AutoIncrement CONSTRAINT FishID PRIMARY KEY,
+  PU_Gap_Code CHAR NOT NULL,
+  Reach_Name CHAR NOT NULL,
+  Event_Date DATE NOT NULL,
+  Fish_Date DATE NOT NULL,
+  Fish_Species_Code CHAR (3) NOT NULL,
+  Fish_Species_Common CHAR (60), 
+  Fish_Species_Scientific CHAR (60),
+  Length DOUBLE,
+  Weight DOUBLE,
+  Sex CHAR (10),
+  Maturity CHAR (10),
+  Deformity CHAR (3),
+  Eroded_fins CHAR (3),
+  Lesions CHAR (3),
+  Tumors CHAR (3),
+  Parasites CHAR (3),
+  Electrofishing_Injury CHAR (3),
+  Release_status CHAR (10),
+  NOTES CHAR
+)")
+           
+
+dbAppendTable(conn = con, "Fish_Abundance_Test4", combined_fish)
+
+dbDisconnect(con)
