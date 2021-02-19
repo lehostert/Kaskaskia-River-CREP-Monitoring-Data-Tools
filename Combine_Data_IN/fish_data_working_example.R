@@ -52,8 +52,8 @@ f1920 <- bind_rows(f20_full, f19_full) %>%
 
 #### Connect to datebase ###
 odbcListDrivers() # to get a list of the drivers your computer knows about 
-con <- dbConnect(odbc::odbc(), "Testing_Database")
-# con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
+# con <- dbConnect(odbc::odbc(), "Testing_Database")
+con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
 options(odbc.batch_rows = 1) # Must be defined as 1 for Access batch writing or appending to tables See .
 dbListTables(con) # To get the list of tables in the database
 
@@ -83,6 +83,7 @@ clw_sum <- counts %>%
          count_dif = if_else(count_dif< 0, 0, count_dif),
          length_dif = if_else(length_dif< 0, 0, length_dif))
 
+write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review_20210219.csv")
 
 # length_differences <- clw_sum %>% 
 #   filter(length_dif >0)
@@ -99,6 +100,11 @@ if_else(differences[[1]] > 0,
           select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
           uncount(count_dif)
         )
+
+not_measured <- clw_sum %>% 
+  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
+  uncount(count_dif)
+
 #### TODO Please take a look at clw_sum before continuing. It seems like there might be more species with length/weight data that were not on the count list than we thought
 ### Fix this. 
 
@@ -134,29 +140,36 @@ combined_fish <- combined_f1320 %>%
   left_join(il_fish_traits) %>% 
   select(18,1:5,19:20,6:17)
 
-dbGetQuery(con, "CREATE TABLE Fish_Abundance
-(
-  Fish_Abundance_ID AutoIncrement PRIMARY KEY,
-  PU_Gap_Code CHAR NOT NULL,
-  Reach_Name CHAR NOT NULL,
-  Event_Date DATE NOT NULL,
-  Fish_Date DATE NOT NULL,
-  Fish_Species_Code CHAR (3) NOT NULL,
-  Fish_Species_Common CHAR (60), 
-  Fish_Species_Scientific CHAR (60),
-  Length DOUBLE,
-  Weight DOUBLE,
-  Sex CHAR (10),
-  Maturity CHAR (10),
-  Deformity CHAR (3),
-  Eroded_fins CHAR (3),
-  Lesions CHAR (3),
-  Tumors CHAR (3),
-  Parasites CHAR (3),
-  Electrofishing_Injury CHAR (3),
-  Release_status CHAR (10),
-  Notes CHAR
-)")
+analysis_fish <- combined_fish %>% 
+  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
+  group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
+  summarise(Fish_Species_Count =  n())
+
+write_csv(analysis_fish, paste0(network_prefix, "/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/Fish_Abundance_Data_CREP_2013-2020.csv"))
+
+# dbGetQuery(con, "CREATE TABLE Fish_Abundance
+#   (
+#   Fish_Abundance_ID AutoIncrement PRIMARY KEY,
+#   PU_Gap_Code CHAR NOT NULL,
+#   Reach_Name CHAR NOT NULL,
+#   Event_Date DATE NOT NULL,
+#   Fish_Date DATE NOT NULL,
+#   Fish_Species_Code CHAR (3) NOT NULL,
+#   Fish_Species_Common CHAR (60), 
+#   Fish_Species_Scientific CHAR (60),
+#   Length DOUBLE,
+#   Weight DOUBLE,
+#   Sex CHAR (10),
+#   Maturity CHAR (10),
+#   Deformity CHAR (3),
+#   Eroded_fins CHAR (3),
+#   Lesions CHAR (3),
+#   Tumors CHAR (3),
+#   Parasites CHAR (3),
+#   Electrofishing_Injury CHAR (3),
+#   Release_status CHAR (10),
+#   Notes CHAR
+#   )")
            
 
 dbAppendTable(conn = con, "Fish_Abundance", combined_fish)
