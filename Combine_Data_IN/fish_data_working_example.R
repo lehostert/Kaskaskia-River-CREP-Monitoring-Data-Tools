@@ -140,10 +140,11 @@ combined_fish <- combined_f1320 %>%
   left_join(il_fish_traits) %>% 
   select(18,1:5,19:20,6:17)
 
-analysis_fish <- combined_fish %>% 
-  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
-  group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
-  summarise(Fish_Species_Count =  n())
+# analysis_fish2 <- combined_fish %>% 
+#   select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
+#   group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
+#   summarise(Fish_Species_Count =  n()) %>% 
+#   filter(Reach_Name == "RC7" & Event_Date  == "2014-08-18")
 
 write_csv(analysis_fish, paste0(network_prefix, "/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/Fish_Abundance_Data_CREP_2013-2020.csv"))
 
