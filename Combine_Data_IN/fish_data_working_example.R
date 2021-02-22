@@ -83,21 +83,21 @@ clw_sum <- counts %>%
          count_dif = if_else(count_dif< 0, 0, count_dif),
          length_dif = if_else(length_dif< 0, 0, length_dif))
 
-write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review_20210219.csv")
+write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review_20210222.csv")
 
 # length_differences <- clw_sum %>% 
 #   filter(length_dif >0)
 
 ## Get a df of those fish that we counted by did not measure for 2013-2018.Only if there are no unresolved measured but not counted fish
-differences <- clw_sum %>% 
-  ungroup() %>% 
+differences <- clw_sum %>%
+  ungroup() %>%
   summarise(differences = sum(length_dif))
 
 if_else(differences[[1]] > 0,
         stop("
              Review fish in weights/length data that are but not in count data!"),
-        not_measured <- clw_sum %>% 
-          select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
+        not_measured <- clw_sum %>%
+          select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>%
           uncount(count_dif)
         )
 
@@ -120,7 +120,8 @@ not_measured <- clw_sum %>%
 # Combine the fish that were just counted (reformatted from above) with those that were weighted and measured (direct from DB).
 combined_clw <- bind_rows(lengths, not_measured) %>% 
   select(-c(Fish_Length_Weight_ID)) %>% 
-  mutate(Fish_Date = Event_Date)
+  mutate(Fish_Date = Event_Date)%>% 
+  filter(!lubridate::year(Event_Date) == 2019)
 
 # Combine the 2013-2018 data with the 2019/2020 data
 
@@ -140,13 +141,18 @@ combined_fish <- combined_f1320 %>%
   left_join(il_fish_traits) %>% 
   select(18,1:5,19:20,6:17)
 
-# analysis_fish2 <- combined_fish %>% 
-#   select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
-#   group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>% 
-#   summarise(Fish_Species_Count =  n()) %>% 
+combined_fish$PU_Gap_Code <- str_to_lower(combined_fish$PU_Gap_Code)
+combined_fish$Reach_Name <- str_to_lower(combined_fish$Reach_Name)
+
+
+analysis_fish <- combined_fish %>%
+  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>%
+  group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>%
+  summarise(Fish_Species_Count =  n())
+
 #   filter(Reach_Name == "RC7" & Event_Date  == "2014-08-18")
 
-write_csv(analysis_fish, paste0(network_prefix, "/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/Fish_Abundance_Data_CREP_2013-2020.csv"))
+write_csv(analysis_fish, paste0(network_prefix, "/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/Fish_Abundance_Data_CREP_2013-2020b.csv"))
 
 # dbGetQuery(con, "CREATE TABLE Fish_Abundance
 #   (
