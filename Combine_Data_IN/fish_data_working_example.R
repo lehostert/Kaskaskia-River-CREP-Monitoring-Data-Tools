@@ -83,9 +83,9 @@ clw_sum <- counts %>%
          count_dif = if_else(count_dif< 0, 0, count_dif),
          length_dif = if_else(length_dif< 0, 0, length_dif))
 
-write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review_20210222.csv")
+write_csv(clw_sum, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/clw_sum_review_20210222b.csv")
 
-# length_differences <- clw_sum %>% 
+# length_differences <- clw_sum %>%
 #   filter(length_dif >0)
 
 ## Get a df of those fish that we counted by did not measure for 2013-2018.Only if there are no unresolved measured but not counted fish
@@ -93,17 +93,28 @@ differences <- clw_sum %>%
   ungroup() %>%
   summarise(differences = sum(length_dif))
 
-if_else(differences[[1]] > 0,
-        stop("
-             Review fish in weights/length data that are but not in count data!"),
-        not_measured <- clw_sum %>%
-          select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>%
-          uncount(count_dif)
-        )
 
-not_measured <- clw_sum %>% 
-  select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
-  uncount(count_dif)
+if(differences[[1]] == 0){
+  not_measured <- clw_sum %>%
+    select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>%
+    uncount(count_dif)
+} else {
+stop("
+             Review fish in weights/length data that are but not in count data!")
+  }
+
+
+### TODO may this should be a stack overflow type of question for later?
+# if_else(differences[[1]] == 0,
+#         not_measured <- clw_sum %>%
+#           select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>%
+#           uncount(count_dif),
+#         stop("Review fish in weights/length data that are but not in count data!")
+#         )
+
+# not_measured <- clw_sum %>% 
+#   select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code, count_dif) %>% 
+#   uncount(count_dif)
 
 #### TODO Please take a look at clw_sum before continuing. It seems like there might be more species with length/weight data that were not on the count list than we thought
 ### Fix this. 
@@ -142,42 +153,69 @@ combined_fish <- combined_f1320 %>%
   select(18,1:5,19:20,6:17)
 
 combined_fish$PU_Gap_Code <- str_to_lower(combined_fish$PU_Gap_Code)
-combined_fish$Reach_Name <- str_to_lower(combined_fish$Reach_Name)
 
+# combined_fish$Reach_Name <- str_to_lower(combined_fish$Reach_Name)
+
+
+combined_fish$Reach_Name <- ifelse(str_detect(combined_fish$Reach_Name, "copper[:digit:]+"),
+                        str_replace(combined_fish$Reach_Name, "copper", "Copper "),
+                        paste(combined_fish$Reach_Name)
+                        )
+
+combined_fish$Reach_Name <- ifelse(str_detect(combined_fish$Reach_Name, "Copper[:digit:]+"),
+                                   str_replace(combined_fish$Reach_Name, "Copper", "Copper "),
+                                   paste(combined_fish$Reach_Name)
+                                   )
+
+combined_fish$Reach_Name <- ifelse(str_detect(combined_fish$Reach_Name, "copper [:digit:]+"),
+                                   str_replace(combined_fish$Reach_Name, "copper", "Copper "),
+                                   paste(combined_fish$Reach_Name)
+                                   )
+
+combined_fish$Reach_Name <- ifelse(str_detect(combined_fish$Reach_Name, "Kasky[:digit:]+"),
+                                   str_replace(combined_fish$Reach_Name, "Kasky", "kasky"),
+                                   paste(combined_fish$Reach_Name)
+                                   )
+
+x <- combined_fish %>% 
+  select(Reach_Name) %>% 
+  unique()
+
+# If you want to use this for Fish Analysis
 
 analysis_fish <- combined_fish %>%
   select(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>%
   group_by(PU_Gap_Code, Reach_Name, Event_Date, Fish_Species_Code) %>%
   summarise(Fish_Species_Count =  n())
 
-#   filter(Reach_Name == "RC7" & Event_Date  == "2014-08-18")
+write_csv(analysis_fish, paste0(network_prefix, "/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/Fish_Abundance_Data_CREP_2013-2020.csv"))
 
-write_csv(analysis_fish, paste0(network_prefix, "/ResearchData/Groups/Kaskaskia_CREP/Analysis/Fish/Data/Fish_Abundance_Data_CREP_2013-2020b.csv"))
+### Write the final version to a table in the DB
 
-# dbGetQuery(con, "CREATE TABLE Fish_Abundance
-#   (
-#   Fish_Abundance_ID AutoIncrement PRIMARY KEY,
-#   PU_Gap_Code CHAR NOT NULL,
-#   Reach_Name CHAR NOT NULL,
-#   Event_Date DATE NOT NULL,
-#   Fish_Date DATE NOT NULL,
-#   Fish_Species_Code CHAR (3) NOT NULL,
-#   Fish_Species_Common CHAR (60), 
-#   Fish_Species_Scientific CHAR (60),
-#   Length DOUBLE,
-#   Weight DOUBLE,
-#   Sex CHAR (10),
-#   Maturity CHAR (10),
-#   Deformity CHAR (3),
-#   Eroded_fins CHAR (3),
-#   Lesions CHAR (3),
-#   Tumors CHAR (3),
-#   Parasites CHAR (3),
-#   Electrofishing_Injury CHAR (3),
-#   Release_status CHAR (10),
-#   Notes CHAR
-#   )")
-           
+dbGetQuery(con, "CREATE TABLE Fish_Abundance
+  (
+  Fish_Abundance_ID AutoIncrement PRIMARY KEY,
+  PU_Gap_Code CHAR NOT NULL,
+  Reach_Name CHAR NOT NULL,
+  Event_Date DATE NOT NULL,
+  Fish_Date DATE NOT NULL,
+  Fish_Species_Code CHAR (3) NOT NULL,
+  Fish_Species_Common CHAR (60),
+  Fish_Species_Scientific CHAR (60),
+  Length DOUBLE,
+  Weight DOUBLE,
+  Sex CHAR (10),
+  Maturity CHAR (10),
+  Deformity CHAR (3),
+  Eroded_fins CHAR (3),
+  Lesions CHAR (3),
+  Tumors CHAR (3),
+  Parasites CHAR (3),
+  Electrofishing_Injury CHAR (3),
+  Release_status CHAR (10),
+  Notes CHAR
+  )")
+
 
 dbAppendTable(conn = con, "Fish_Abundance", combined_fish)
 
