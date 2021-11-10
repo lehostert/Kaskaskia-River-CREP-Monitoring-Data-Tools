@@ -1,7 +1,7 @@
 {
   "SWC": ["text", "text", "date", "skip", "skip", "skip", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
   "FSH": ["text", "text", "text", "date", "date", "text", "text", "text", "numeric", "numeric", "text", "text", "text", "text", "text", "text", "text", "text", "text", "text"],
-  "FMD": ["text", "text", "text", "date", "date", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "date", "numeric", "numeric", "text", "date"],
+  "FMD": ["text", "text", "date", "date", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "date", "numeric", "numeric", "text", "date"],
   "IHI": ["text", "text", "date", "skip", "skip", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "text", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
   "QHEI": ["text", "text", "date", "skip", "skip", "skip", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
   "DSC": ["text", "text", "date", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
