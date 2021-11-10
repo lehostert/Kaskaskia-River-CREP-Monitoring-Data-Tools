@@ -4,7 +4,7 @@ library(DBI)
 # library(docstring)
 
 network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison", "/Volumes")
-network_path <- paste0("/ResearchData/Groups/Kaskaskia_CREP")
+network_path <- paste0(network_prefix,"/ResearchData/Groups/Kaskaskia_CREP")
 
 ### with odbc
 odbcListDrivers() # to get a list of the drivers your computer knows about 
@@ -13,8 +13,8 @@ con <- dbConnect(odbc::odbc(), "2019_CREP_Database")
 options(odbc.batch_rows = 1) # Must be defined as 1 for Access batch writing or appending to tables See .
 dbListTables(con) # To get the list of tables in the database
 
-loc_19 <- readxl::read_xlsx(paste0(network_prefix, network_path, "/Data/Data_IN/SITES/Sites_2019.xlsx"))
-loc_20 <- readxl::read_xlsx(paste0(network_prefix, network_path, "/Data/Data_IN/SITES/Sites_2020.xlsx"))
+loc_19 <- readxl::read_xlsx(paste0(network_path, "/Data/Data_IN/SITES/Sites_2019.xlsx"))
+loc_20 <- readxl::read_xlsx(paste0(network_path, "/Data/Data_IN/SITES/Sites_2020.xlsx"))
 
 loc_1920 <- loc_19 %>% 
   bind_rows(loc_20) %>% 
@@ -42,8 +42,18 @@ new_locations <- setdiff(loc_1920, loc_db)
 
 all_locations_with_dup <- bind_rows("new" = new_locations , "db" = loc_db, .id = "source")
 
+map <-  all_locations_with_dup %>% 
+  filter(Site_Type == "random") %>% 
+  select(-c(Stream_Name, source, PU_Code, Gap_Code, Site_Type)) %>% 
+  unique()
 
+names(map) <- stringr::str_to_lower(names(map))
 
+map_fish <- fish_df_random %>% 
+  left_join(map, by = c("pu_gap_code", "reach_name")) %>% 
+  select(1:5, 78:79, 6:77)
+
+write_csv(map_fish, path = "~/GitHub/Kaskaskia-River-CREP-Monitoring-Data-Tools/Combine_Data_IN/fish_locations_random_sites.csv")
 
 # dbAppendTable(con, name = "Established_Locations", new_locations)
 
