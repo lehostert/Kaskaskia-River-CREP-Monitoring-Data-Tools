@@ -8,5 +8,5 @@
   "DSC": ["text", "text", "date", "date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"],
   "INV": ["text", "text", "date", "skip", "skip", "skip", "numeric", "text", "text", "text", "text"],
   "FSH19": ["text", "text", "text", "date", "skip", "skip", "skip", "text", "text", "text", "numeric", "numeric", "text", "text", "text", "text", "text", "text", "text", "text", "text", "text"],
-  "IHI-for-IBI": ["text", "text", "date", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "text", "text", "text", "text", "text", "text", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"]
+  "IHI-for-IBI": ["text", "text", "date", "date", "skip", "numeric", "skip", "skip", "skip", "skip", "skip", "skip", "numeric", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip",]
 }
