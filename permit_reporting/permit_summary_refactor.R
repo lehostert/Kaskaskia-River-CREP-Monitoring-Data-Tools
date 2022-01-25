@@ -1,10 +1,11 @@
 library(tidyverse)
 library(writexl)
 
-network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison", "/Volumes")
-# network_prefix <- "//INHS-Bison" #Lauren's Desktop PC
+network_prefix <- if_else(as.character(Sys.info()["sysname"]) == "Windows", "//INHS-Bison.ad.uillinois.edu", "/Volumes")
+network_path <- paste0(network_prefix, "/ResearchData/Groups/StreamEcologyLab/CREP")
 
-sampling_year <- 2020
+
+sampling_year <- 2021
 
 #### Read in fish data and turn into abundance data ####
 
@@ -57,6 +58,8 @@ location_summary <- location %>%
 location_summary$PU_Gap_Code <- stringr::str_to_lower(location_summary$PU_Gap_Code)
 location_summary$Reach_Name <-  stringr::str_to_lower(location_summary$Reach_Name)
 location_summary$Reach_Name <- stringr::str_remove(location_summary$Reach_Name, "[:blank:]")
+
+### Select
 
 
 ### Join Fish and Location Data
