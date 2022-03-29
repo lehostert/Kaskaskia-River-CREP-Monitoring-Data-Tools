@@ -32,14 +32,17 @@ online <- inv_online %>%
   
 inv_reform <- invert %>% 
   select(-c(Jab_Collector)) %>% 
-  left_join(online, by = c("EDU_Code", "Reach_Name" = "Site_Name", "Event_Date", "Invert_Date" = "INV_Date")) %>% 
+  # left_join(online, by = c("EDU_Code", "Reach_Name" = "Site_Name", "Event_Date", "Invert_Date" = "INV_Date")) %>% 
   # rename(INV_Date = Event_Date, Event_Date = Event_Date.y) %>% 
   select(EDU_Code, Reach_Name, Collection_Date = Invert_Date, Collector, Habitat, Final_Vials, Final_Org_Count) %>% 
-  mutate(Final_Vials = replace_na(Final_Vials, 1))
+  # mutate(Final_Vials = replace_na(Final_Vials, 1))
 
 
 inv_final <- uncount(inv_reform, Final_Vials, .remove = FALSE, .id = "Vial_Num")
 inv_final$Collection_Date <- lubridate::date(inv_final$Collection_Date)
 
+inv_final <- invert %>% 
+  select(EDU_Code, Reach_Name, Invert_Date, Habitat, Collector) %>% 
+  arrange(Invert_Date)
 
-write_csv(inv_final, path = paste0("~/CREP/External_Lab/EcoAnalysts Invert Tables/", year,"/Invert_Sample_Labels_", year,".csv"))
+write_csv(inv_final, path = paste0(network_path,"/EcoAnalysts Invert Tables Copy/", year,"/Invert_Sample_COC_", year,".csv"))
